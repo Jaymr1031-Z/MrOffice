@@ -2804,6 +2804,8 @@ function registerHomeIpc(): void {
    }
  })
 
+ ipcMain.handle(HOME_CHANNELS.githubRepoUrl, () => GITHUB_REPO_URL)
+
  ipcMain.handle(HOME_CHANNELS.githubStars, () => fetchGithubStars())
 
  // returning true also counts as "shown": the renderer displays it

@@ -483,6 +483,7 @@ export function SettingsModal({
  const [channel, setChannel] = useState<'stable' | 'beta'>('stable')
  const [appVersion, setAppVersion] = useState('')
  const [githubStars, setGithubStars] = useState<number | null>(null)
+ const [repoUrl, setRepoUrl] = useState('')
 
  useEffect(() => {
  let alive = true
@@ -502,7 +503,10 @@ export function SettingsModal({
  if (alive && v) setAppVersion(v)
  })
  void window.aiOffice.githubStars?.().then((n) => {
- if (alive && n !== null) setGithubStars(n)
+  if (alive && n !== null) setGithubStars(n)
+ })
+ void window.aiOffice.githubRepoUrl?.().then((u) => {
+  if (alive && u) setRepoUrl(u)
  })
  return () => {
  alive = false
@@ -658,25 +662,27 @@ export function SettingsModal({
  }}
  />
  </div>
- <Field
- label={t('setGithub')}
- value={
- githubStars === null
- ? 'github.com/-ai/genoffice'
- : `github.com/-ai/genoffice · ★ ${formatStars(githubStars)}`
- }
- action={
- <button
- className="set-btn"
- onClick={() => void window.aiOffice.openGitHubRepo?.()}
- >
- {t('starOnGitHub')}
- </button>
- }
- />
+ {repoUrl && (
+  <Field
+   label={t('setGithub')}
+   value={
+    githubStars === null
+    ? repoUrl
+    : `${repoUrl} · ★ ${formatStars(githubStars)}`
+   }
+   action={
+    <button
+    className="set-btn"
+    onClick={() => void window.aiOffice.openGitHubRepo?.()}
+    >
+    {t('starOnGitHub')}
+    </button>
+   }
+  />
+ )}
  </>
  )}
- </div>
+</div>
  </div>
  </div>
  </div>

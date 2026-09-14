@@ -180,7 +180,11 @@ const homeApi: HomeApi = {
  await ipcRenderer.invoke(HOME_CHANNELS.openMrOffice)
  },
  async openGitHubRepo() {
- await ipcRenderer.invoke(HOME_CHANNELS.openGitHubRepo)
+  await ipcRenderer.invoke(HOME_CHANNELS.openGitHubRepo)
+ },
+ async githubRepoUrl() {
+  const result: unknown = await ipcRenderer.invoke(HOME_CHANNELS.githubRepoUrl)
+  return typeof result === 'string' ? result : ''
  },
  async githubStars() {
  const result: unknown = await ipcRenderer.invoke(HOME_CHANNELS.githubStars)

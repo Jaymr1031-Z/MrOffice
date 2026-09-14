@@ -133,6 +133,8 @@ export interface HomeApi {
  openMrOffice(): Promise<void>
  /** open the public GitHub repository in the default browser */
  openGitHubRepo(): Promise<void>
+ /** the configured public repo URL ('' when none is wired up — local-first builds) */
+ githubRepoUrl(): Promise<string>
  /** current stargazer count of the public repo (null while offline / rate-limited) */
  githubStars(): Promise<number | null>
  /** whether the one-time "star us" prompt should show now (show:true also counts as shown);
@@ -247,6 +249,7 @@ export const HOME_CHANNELS = {
  pickDefaultSaveDir: 'home:pick-default-save-dir',
  openMrOffice: 'home:open-genteam',
  openGitHubRepo: 'home:open-github-repo',
+ githubRepoUrl: 'home:github-repo-url',
  githubStars: 'home:github-stars',
  starPromptShouldShow: 'home:star-prompt-should-show',
  starPromptAction: 'home:star-prompt-action',
