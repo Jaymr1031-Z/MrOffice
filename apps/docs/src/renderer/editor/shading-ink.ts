@@ -8,14 +8,14 @@
 export type FillInk = 'light' | 'dark'
 
 export function fillInk(hex: string | null | undefined): FillInk | undefined {
-  if (!hex) return undefined
-  const s = hex.startsWith('#') ? hex.slice(1) : hex
-  if (!/^[0-9a-fA-F]{6}$/.test(s)) return undefined
-  const n = parseInt(s, 16)
-  const luma = (77 * ((n >> 16) & 255) + 151 * ((n >> 8) & 255) + 28 * (n & 255)) / 256
-  return luma < 60 ? 'light' : 'dark'
+ if (!hex) return undefined
+ const s = hex.startsWith('#') ? hex.slice(1) : hex
+ if (!/^[0-9a-fA-F]{6}$/.test(s)) return undefined
+ const n = parseInt(s, 16)
+ const luma = (77 * ((n >> 16) & 255) + 151 * ((n >> 8) & 255) + 28 * (n & 255)) / 256
+ return luma < 60 ? 'light' : 'dark'
 }
 
 export function isDarkFill(hex: string | null | undefined): boolean {
-  return fillInk(hex) === 'light'
+ return fillInk(hex) === 'light'
 }

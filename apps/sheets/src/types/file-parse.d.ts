@@ -8,11 +8,11 @@
 export type ParsedFileKind = 'text' | 'image' | 'unsupported'
 
 export interface ParsedFile {
-  ok: boolean
-  text?: string
-  kind: ParsedFileKind
-  mime?: string
-  error?: string
+ ok: boolean
+ text?: string
+ kind: ParsedFileKind
+ mime?: string
+ error?: string
 }
 
 /** parse an attachment into plain text (or flag it as image / unsupported) */

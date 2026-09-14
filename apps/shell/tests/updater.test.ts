@@ -464,9 +464,7 @@ describe('manual download fallback', () => {
     readFileSyncMock.mockReturnValue('url: http://cdn.example.com/mac\n')
     const actions = await failTwiceIntoManual(macFiles)
     actions.onOpenDownload()
-    expect(openExternal).toHaveBeenCalledWith(
-      'https://github.com/genspark-ai/genoffice/releases/latest',
-    )
+    expect(openExternal).not.toHaveBeenCalled()
   })
 
   it('falls back to the generic download page when the feed base cannot be read', async () => {
@@ -475,9 +473,7 @@ describe('manual download fallback', () => {
       { url: 'https://attacker.example/GenOffice-0.2.0-arm64.dmg' },
     ])
     actions.onOpenDownload()
-    expect(openExternal).toHaveBeenCalledWith(
-      'https://github.com/genspark-ai/genoffice/releases/latest',
-    )
+    expect(openExternal).not.toHaveBeenCalled()
   })
 })
 

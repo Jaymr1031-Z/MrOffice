@@ -9,7 +9,7 @@ const A4_SIZE: [number, number] = [595.28, 841.89]
  * (same pattern as the blank workbook in sheets).
  */
 export async function blankPdfBuffer(): Promise<Buffer> {
-  const doc = await PDFDocument.create()
-  doc.addPage(A4_SIZE)
-  return Buffer.from(await doc.save())
+ const doc = await PDFDocument.create()
+ doc.addPage(A4_SIZE)
+ return Buffer.from(await doc.save())
 }

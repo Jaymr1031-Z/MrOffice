@@ -24,38 +24,38 @@ import type { UniverRuntime } from './univer-state'
 /// Rows of `range` that fall inside `filterRange` and are hidden. Pure so the
 /// row-exclusion rule is unit-testable without a Univer instance.
 export function hiddenRowsInFilterRange(
-  range: IRange,
-  filterRange: IRange | null,
-  isRowHidden: (row: number) => boolean,
+ range: IRange,
+ filterRange: IRange | null,
+ isRowHidden: (row: number) => boolean,
 ): number[] {
-  if (!filterRange) return []
-  const start = Math.max(range.startRow, filterRange.startRow)
-  const end = Math.min(range.endRow, filterRange.endRow)
-  const rows: number[] = []
-  for (let row = start; row <= end; row += 1) {
-    if (isRowHidden(row)) rows.push(row)
-  }
-  return rows
+ if (!filterRange) return []
+ const start = Math.max(range.startRow, filterRange.startRow)
+ const end = Math.min(range.endRow, filterRange.endRow)
+ const rows: number[] = []
+ for (let row = start; row <= end; row += 1) {
+ if (isRowHidden(row)) rows.push(row)
+ }
+ return rows
 }
 
 export function installFilteredCopyHook(runtime: UniverRuntime): { dispose(): void } {
-  const injector = runtime.univer.__getInjector()
-  const clipboardService = injector.get(ISheetClipboardService)
-  const filterService = injector.get(SheetsFilterService)
-  const instanceService = injector.get(IUniverInstanceService)
-  return clipboardService.addClipboardHook({
-    id: 'genoffice-filtered-copy',
-    getFilteredOutRows: (unitId, subUnitId, range) => {
-      const filterModel = filterService.getFilterModel(unitId, subUnitId)
-      const worksheet = instanceService.getUniverSheetInstance(unitId)?.getSheetBySheetId(subUnitId)
-      if (!filterModel || !worksheet) return []
-      return hiddenRowsInFilterRange(
-        range,
-        filterModel.getRange(),
-        // Raw visibility ignores the filter model — model-filtered rows are
-        // already excluded by Univer's own default hook.
-        (row) => !worksheet.getRowRawVisible(row),
-      )
-    },
-  })
+ const injector = runtime.univer.__getInjector()
+ const clipboardService = injector.get(ISheetClipboardService)
+ const filterService = injector.get(SheetsFilterService)
+ const instanceService = injector.get(IUniverInstanceService)
+ return clipboardService.addClipboardHook({
+ id: 'genoffice-filtered-copy',
+ getFilteredOutRows: (unitId, subUnitId, range) => {
+ const filterModel = filterService.getFilterModel(unitId, subUnitId)
+ const worksheet = instanceService.getUniverSheetInstance(unitId)?.getSheetBySheetId(subUnitId)
+ if (!filterModel || !worksheet) return []
+ return hiddenRowsInFilterRange(
+ range,
+ filterModel.getRange(),
+ // Raw visibility ignores the filter model — model-filtered rows are
+ // already excluded by Univer's own default hook.
+ (row) => !worksheet.getRowRawVisible(row),
+ )
+ },
+ })
 }

@@ -4,5 +4,5 @@
  * Keeping them as text also preserves leading zeroes and full precision.
  */
 export function isNumericIdentifierText(value: string): boolean {
-  return /^\d{7,}$/.test(value.trim())
+ return /^\d{7,}$/.test(value.trim())
 }

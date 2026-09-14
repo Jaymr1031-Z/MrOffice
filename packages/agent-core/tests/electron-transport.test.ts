@@ -12,7 +12,6 @@ interface FakeSettings {
 
 function setup(
   startImpl?: (request: IpcStreamStart<FakeSettings>) => void | Promise<unknown>,
-  creditsErrorText?: () => string,
   networkErrorText?: () => string,
   overloadedErrorText?: () => string,
 ) {
@@ -32,10 +31,9 @@ function setup(
       return startImpl?.(request)
     },
     cancel: (requestId) => cancelled.push(requestId),
-    getSettings: () => ({ provider: 'genspark' }),
+    getSettings: () => ({ provider: 'codex' }),
     unknownErrorText: () => 'unknown error',
     timeoutErrorText: () => 'timed out',
-    ...(creditsErrorText ? { creditsErrorText } : {}),
     ...(networkErrorText ? { networkErrorText } : {}),
     ...(overloadedErrorText ? { overloadedErrorText } : {}),
   })
@@ -57,7 +55,7 @@ describe('createIpcTransport', () => {
   it('starts one request with settings and forwards deltas and tool calls', () => {
     const { started, cb, emit } = setup()
     expect(started).toHaveLength(1)
-    expect(started[0]!.settings).toEqual({ provider: 'genspark' })
+    expect(started[0]!.settings).toEqual({ provider: 'codex' })
     expect(started[0]!.system).toBe('sys')
 
     emit({ type: 'delta', text: 'hi' })
@@ -117,18 +115,8 @@ describe('createIpcTransport', () => {
     expect(cb.onError).toHaveBeenCalledWith('timed out')
   })
 
-  it('maps a credits error code to the localized credits message', () => {
-    const { cb, emit } = setup(undefined, () => 'credits used up')
-    emit({
-      type: 'error',
-      error: 'Your Genspark credits have been exhausted.',
-      errorCode: 'credits',
-    })
-    expect(cb.onError).toHaveBeenCalledWith('credits used up')
-  })
-
   it('maps a network error code to the localized network message', () => {
-    const { cb, emit } = setup(undefined, undefined, () => 'network problem')
+    const { cb, emit } = setup(undefined, () => 'network problem')
     emit({
       type: 'error',
       error: 'Claude fetch failed: fetch failed cause=ECONNRESET',
@@ -147,18 +135,8 @@ describe('createIpcTransport', () => {
     expect(cb.onError).toHaveBeenCalledWith('Claude fetch failed: fetch failed cause=ECONNRESET')
   })
 
-  it('a credits error code without creditsErrorText falls back to the carried text', () => {
-    const { cb, emit } = setup()
-    emit({
-      type: 'error',
-      error: 'Your Genspark credits have been exhausted.',
-      errorCode: 'credits',
-    })
-    expect(cb.onError).toHaveBeenCalledWith('Your Genspark credits have been exhausted.')
-  })
-
   it('maps an overloaded error code to the localized busy message', () => {
-    const { cb, emit } = setup(undefined, undefined, undefined, () => 'service busy')
+    const { cb, emit } = setup(undefined, undefined, () => 'service busy')
     emit({
       type: 'error',
       error: 'HTTP 429: {"error":{"type":"engine_overloaded_error"}}',

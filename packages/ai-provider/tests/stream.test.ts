@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { AgentToolCall } from '@genoffice/agent-core'
-import { AiCreditsError, sseLines, streamForProvider } from '../src/stream'
+import { sseLines, streamForProvider } from '../src/stream'
 import { jsonResponse, okResponse, sseStream } from './test-utils'
 
 afterEach(() => {
@@ -822,146 +822,12 @@ describe('streamForProvider: openai-compatible', () => {
   })
 })
 
-describe('streamForProvider: genspark', () => {
-  it('routes claude models to the Anthropic-compatible proxy endpoint', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(okResponse(sseStream([])))
-    vi.stubGlobal('fetch', fetchMock)
-    const { cb } = collector()
-    await streamForProvider(
-      'genspark',
-      { apiKey: 'gsk-k', model: 'claude-opus-4-7' },
-      'sys',
-      [],
-      [],
-      100,
-      cb,
-    ).catch(() => {})
-    expect(fetchMock).toHaveBeenCalledWith(
-      'https://www.genspark.ai/api/anthropic/v1/messages',
-      expect.objectContaining({ headers: expect.objectContaining({ 'x-api-key': 'gsk-k' }) }),
-    )
-  })
-
-  it('routes other models to the OpenAI-compatible proxy', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(okResponse(sseStream(['data: [DONE]'])))
-    vi.stubGlobal('fetch', fetchMock)
-    const { cb } = collector()
-    await streamForProvider(
-      'genspark',
-      { apiKey: 'gsk-k', model: 'gpt-5.2' },
-      'sys',
-      [],
-      [],
-      100,
-      cb,
-    ).catch(() => {})
-    expect(fetchMock).toHaveBeenCalledWith(
-      'https://www.genspark.ai/api/llm_proxy/v1/chat/completions',
-      expect.anything(),
-    )
-  })
-
-  it('stamps X-Agent-Type on both proxy routes for billing attribution', async () => {
-    for (const model of ['claude-opus-4-7', 'gpt-5.2']) {
-      const fetchMock = vi.fn().mockResolvedValue(okResponse(sseStream([])))
-      vi.stubGlobal('fetch', fetchMock)
-      const { cb } = collector()
-      await streamForProvider('genspark', { apiKey: 'gsk-k', model }, 'sys', [], [], 100, cb).catch(
-        () => {},
-      )
-      expect(fetchMock).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          headers: expect.objectContaining({ 'X-Agent-Type': 'genoffice' }),
-        }),
-      )
-    }
-  })
-
-  it('never sends X-Agent-Type to direct vendor APIs', async () => {
-    for (const [provider, model] of [
-      ['anthropic', 'claude-opus-4-7'],
-      ['gemini', 'gemini-2.5-flash'],
-      ['openai', 'gpt-4.1-mini'],
-    ] as const) {
-      const fetchMock = vi.fn().mockResolvedValue(okResponse(sseStream([])))
-      vi.stubGlobal('fetch', fetchMock)
-      const { cb } = collector()
-      await streamForProvider(provider, { apiKey: 'k', model }, 'sys', [], [], 100, cb).catch(
-        () => {},
-      )
-      const headers = fetchMock.mock.calls[0]![1].headers as Record<string, string>
-      expect(headers['X-Agent-Type']).toBeUndefined()
-    }
-  })
-})
-
 describe('streamForProvider: 200 + non-stream JSON instead of SSE', () => {
-  const creditsNotice =
-    'Your Genspark credits have been exhausted. Please visit https://www.genspark.ai/pricing to purchase more credits.'
   const json = (value: unknown) =>
     new Response(JSON.stringify(value), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     })
-
-  it('anthropic route: a credits-exhausted notice becomes AiCreditsError with the notice text', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(
-        json({
-          type: 'message',
-          role: 'assistant',
-          content: [{ type: 'text', text: creditsNotice }],
-          stop_reason: 'end_turn',
-          usage: { input_tokens: 0, output_tokens: 0 },
-        }),
-      ),
-    )
-    const { deltas, cb } = collector()
-    const run = streamForProvider('anthropic', { apiKey: 'k', model: 'm' }, 'sys', [], [], 100, cb)
-    await expect(run).rejects.toBeInstanceOf(AiCreditsError)
-    await expect(run).rejects.toThrow(/credits have been exhausted/)
-    expect(deltas).toEqual([])
-  })
-
-  it('gemini route: zero usage + a pricing link counts as a credits notice', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(
-        json({
-          candidates: [
-            {
-              content: {
-                parts: [{ text: 'Out of quota, visit https://www.genspark.ai/pricing to top up.' }],
-              },
-            },
-          ],
-          usageMetadata: { promptTokenCount: 0, candidatesTokenCount: 0, totalTokenCount: 0 },
-        }),
-      ),
-    )
-    const { cb } = collector()
-    await expect(
-      streamForProvider('gemini', { apiKey: 'k', model: 'm' }, 'sys', [], [], 100, cb),
-    ).rejects.toBeInstanceOf(AiCreditsError)
-  })
-
-  it('openai route: an insufficient-credits message becomes AiCreditsError', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(
-        json({
-          choices: [{ message: { role: 'assistant', content: 'Insufficient credits remaining.' } }],
-          usage: { prompt_tokens: 0, completion_tokens: 0 },
-        }),
-      ),
-    )
-    const { cb } = collector()
-    await expect(
-      streamForProvider('openai', { apiKey: 'k', model: 'm' }, 'sys', [], [], 100, cb),
-    ).rejects.toBeInstanceOf(AiCreditsError)
-  })
 
   it('a non-credits notice is emitted as the reply text instead of an empty turn', async () => {
     vi.stubGlobal(
@@ -1047,7 +913,7 @@ describe('streamForProvider: interleaved-thinking reasoning', () => {
     const reasoning: string[] = []
     const { deltas, cb } = collector()
     await streamForProvider(
-      'genspark',
+      'openrouter',
       { apiKey: 'k', model: 'deep-seek-v4-flash' },
       'sys',
       toolLoopMessages,
@@ -1066,7 +932,7 @@ describe('streamForProvider: interleaved-thinking reasoning', () => {
     const fetchMock = vi.fn().mockImplementation(() => Promise.resolve(reasoningTurn()))
     vi.stubGlobal('fetch', fetchMock)
     await streamForProvider(
-      'genspark',
+      'openrouter',
       { apiKey: 'k', model: 'gpt-5.6-luna' },
       'sys',
       toolLoopMessages,

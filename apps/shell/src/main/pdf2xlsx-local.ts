@@ -14,18 +14,18 @@ export type { ConvertXlsxResult } from '../../../../packages/pdf2docx/src'
 
 /** Convert a PDF file on disk to xlsx bytes, fully locally. */
 export async function convertPdfFileToXlsxLocal(
-  pdfPath: string,
-  onProgress?: (page: number, total: number) => void,
-  password?: string,
+ pdfPath: string,
+ onProgress?: (page: number, total: number) => void,
+ password?: string,
 ): Promise<ConvertXlsxResult> {
-  const pdfium = await ensurePdfium()
-  const bytes = readFileSync(pdfPath)
-  const pdf = new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength)
-  return convertPdfToXlsx(pdf, {
-    pdfium,
-    ...(onProgress !== undefined ? { onProgress } : {}),
-    ...(password !== undefined ? { password } : {}),
-  })
+ const pdfium = await ensurePdfium()
+ const bytes = readFileSync(pdfPath)
+ const pdf = new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength)
+ return convertPdfToXlsx(pdf, {
+ pdfium,
+ ...(onProgress !== undefined ? { onProgress } : {}),
+ ...(password !== undefined ? { password } : {}),
+ })
 }
 
 /**
@@ -34,12 +34,12 @@ export async function convertPdfFileToXlsxLocal(
  * Resolves null when the user cancels the prompt.
  */
 export function convertPdfFileToXlsxLocalWithPrompt(
-  pdfPath: string,
-  promptPassword: (retry: boolean) => Promise<string | null>,
-  onProgress?: (page: number, total: number) => void,
+ pdfPath: string,
+ promptPassword: (retry: boolean) => Promise<string | null>,
+ onProgress?: (page: number, total: number) => void,
 ): Promise<ConvertXlsxResult | null> {
-  return convertWithPasswordRetry(
-    (password) => convertPdfFileToXlsxLocal(pdfPath, onProgress, password),
-    promptPassword,
-  )
+ return convertWithPasswordRetry(
+ (password) => convertPdfFileToXlsxLocal(pdfPath, onProgress, password),
+ promptPassword,
+ )
 }

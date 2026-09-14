@@ -7,11 +7,11 @@
 export const MAX_AUTOMATIC_RECOVERY_WORKSHEET_XML_BYTES = 64 * 1024 * 1024
 
 export function allowsAutomaticWorkbookRecovery(
-  sheets: readonly { readonly sourceXmlBytes?: number | undefined }[],
+ sheets: readonly { readonly sourceXmlBytes?: number | undefined }[],
 ): boolean {
-  return sheets.every(
-    (sheet) =>
-      sheet.sourceXmlBytes === undefined ||
-      sheet.sourceXmlBytes <= MAX_AUTOMATIC_RECOVERY_WORKSHEET_XML_BYTES,
-  )
+ return sheets.every(
+ (sheet) =>
+ sheet.sourceXmlBytes === undefined ||
+ sheet.sourceXmlBytes <= MAX_AUTOMATIC_RECOVERY_WORKSHEET_XML_BYTES,
+ )
 }

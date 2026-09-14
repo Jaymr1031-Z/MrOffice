@@ -7,10 +7,10 @@ import type { UniverRuntime } from './univer-state'
 export const BULK_FILL_UNDO_COMMAND_ID = 'sheets.mutation.bulk-constant-fill'
 
 interface BulkFillUndoParams {
-  readonly fill: WorkbookBulkConstantFill
-  /// Value entries the fill purged at record time; undo reinstates them.
-  readonly purgedCells: readonly JournalEntry[]
-  readonly direction: 'undo' | 'redo'
+ readonly fill: WorkbookBulkConstantFill
+ /// Value entries the fill purged at record time; undo reinstates them.
+ readonly purgedCells: readonly JournalEntry[]
+ readonly direction: 'undo' | 'redo'
 }
 
 type BulkFillUndoHandler = (params: BulkFillUndoParams) => boolean
@@ -24,53 +24,53 @@ const registeredRuntimes = new WeakSet<object>()
  * can move the whole AI batch to the workbook session created after Save.
  */
 export function pushBulkFillUndo(
-  runtime: UniverRuntime,
-  fill: WorkbookBulkConstantFill,
-  purgedCells: readonly JournalEntry[],
-  handler: BulkFillUndoHandler,
+ runtime: UniverRuntime,
+ fill: WorkbookBulkConstantFill,
+ purgedCells: readonly JournalEntry[],
+ handler: BulkFillUndoHandler,
 ): void {
-  const unitId = runtime.univerAPI.getActiveWorkbook()?.getId()
-  if (!unitId) return
-  const injector = (
-    runtime.univer as unknown as {
-      __getInjector(): { get<T>(token: unknown): T }
-    }
-  ).__getInjector()
-  handlers.set(runtime, handler)
-  if (!registeredRuntimes.has(runtime)) {
-    registeredRuntimes.add(runtime)
-    injector
-      .get<{
-        registerCommand(command: {
-          id: string
-          type: unknown
-          handler: (accessor: unknown, params?: BulkFillUndoParams) => boolean
-        }): unknown
-      }>(ICommandService)
-      .registerCommand({
-        id: BULK_FILL_UNDO_COMMAND_ID,
-        type: CommandType.MUTATION,
-        handler: (_accessor, params) => {
-          const current = handlers.get(runtime)
-          return params !== undefined && current !== undefined ? current(params) : false
-        },
-      })
-  }
-  injector
-    .get<{
-      pushUndoRedo(item: {
-        unitID: string
-        undoMutations: { id: string; params: BulkFillUndoParams }[]
-        redoMutations: { id: string; params: BulkFillUndoParams }[]
-      }): void
-    }>(IUndoRedoService)
-    .pushUndoRedo({
-      unitID: unitId,
-      undoMutations: [
-        { id: BULK_FILL_UNDO_COMMAND_ID, params: { fill, purgedCells, direction: 'undo' } },
-      ],
-      redoMutations: [
-        { id: BULK_FILL_UNDO_COMMAND_ID, params: { fill, purgedCells, direction: 'redo' } },
-      ],
-    })
+ const unitId = runtime.univerAPI.getActiveWorkbook()?.getId()
+ if (!unitId) return
+ const injector = (
+ runtime.univer as unknown as {
+ __getInjector(): { get<T>(token: unknown): T }
+ }
+ ).__getInjector()
+ handlers.set(runtime, handler)
+ if (!registeredRuntimes.has(runtime)) {
+ registeredRuntimes.add(runtime)
+ injector
+ .get<{
+ registerCommand(command: {
+ id: string
+ type: unknown
+ handler: (accessor: unknown, params?: BulkFillUndoParams) => boolean
+ }): unknown
+ }>(ICommandService)
+ .registerCommand({
+ id: BULK_FILL_UNDO_COMMAND_ID,
+ type: CommandType.MUTATION,
+ handler: (_accessor, params) => {
+ const current = handlers.get(runtime)
+ return params !== undefined && current !== undefined ? current(params) : false
+ },
+ })
+ }
+ injector
+ .get<{
+ pushUndoRedo(item: {
+ unitID: string
+ undoMutations: { id: string; params: BulkFillUndoParams }[]
+ redoMutations: { id: string; params: BulkFillUndoParams }[]
+ }): void
+ }>(IUndoRedoService)
+ .pushUndoRedo({
+ unitID: unitId,
+ undoMutations: [
+ { id: BULK_FILL_UNDO_COMMAND_ID, params: { fill, purgedCells, direction: 'undo' } },
+ ],
+ redoMutations: [
+ { id: BULK_FILL_UNDO_COMMAND_ID, params: { fill, purgedCells, direction: 'redo' } },
+ ],
+ })
 }

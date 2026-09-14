@@ -1,8 +1,8 @@
 /** Disk snapshot recorded at the last read/write of a document path. */
 export interface DiskFileState {
-  mtimeMs: number
-  size: number
-  hash: string
+ mtimeMs: number
+ size: number
+ hash: string
 }
 
 /**
@@ -13,12 +13,12 @@ export interface DiskFileState {
  * disagree, so the common no-conflict save never rereads the file.
  */
 export async function isExternallyModified(
-  recorded: DiskFileState | undefined,
-  current: { mtimeMs: number; size: number } | null,
-  readHash: () => string | null | Promise<string | null>,
+ recorded: DiskFileState | undefined,
+ current: { mtimeMs: number; size: number } | null,
+ readHash: () => string | null | Promise<string | null>,
 ): Promise<boolean> {
-  if (!recorded || !current) return false
-  if (current.mtimeMs === recorded.mtimeMs && current.size === recorded.size) return false
-  const hash = await readHash()
-  return hash !== null && hash !== recorded.hash
+ if (!recorded || !current) return false
+ if (current.mtimeMs === recorded.mtimeMs && current.size === recorded.size) return false
+ const hash = await readHash()
+ return hash !== null && hash !== recorded.hash
 }

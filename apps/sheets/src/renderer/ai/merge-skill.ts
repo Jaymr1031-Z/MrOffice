@@ -20,93 +20,93 @@ When the user attaches spreadsheet files (xlsx/xlsm/xls/csv) and asks to merge, 
 
 /** attachment indexes that are spreadsheets (the tool's default selection) */
 export function spreadsheetAttachmentIndexes(list: readonly AttachmentMeta[]): number[] {
-  const indexes: number[] = []
-  for (let index = 0; index < list.length; index += 1) {
-    const attachment = list[index]
-    if (attachment && SPREADSHEET_ATTACHMENT_EXTS.has(attachment.ext)) indexes.push(index)
-  }
-  return indexes
+ const indexes: number[] = []
+ for (let index = 0; index < list.length; index += 1) {
+ const attachment = list[index]
+ if (attachment && SPREADSHEET_ATTACHMENT_EXTS.has(attachment.ext)) indexes.push(index)
+ }
+ return indexes
 }
 
 export interface MergeSkillDeps {
-  getAttachments(): readonly AttachmentMeta[]
-  mergePaths(paths: string[]): Promise<MergeSourcesResult>
+ getAttachments(): readonly AttachmentMeta[]
+ mergePaths(paths: string[]): Promise<MergeSourcesResult>
 }
 
 export function createMergeSkill(deps: MergeSkillDeps): AgentSkill {
-  return {
-    id: 'workbook-merge',
-    systemPrompt: MERGE_SYSTEM_PROMPT,
-    tools: [
-      {
-        name: 'merge_attached_workbooks',
-        description:
-          'Import every sheet of the attached spreadsheet files (xlsx/xlsm/xls/csv) into the current workbook, engine-side. ' +
-          'Returns the created sheet names. Use this before analyzing or restructuring attached spreadsheet data; ' +
-          'never rebuild attachment contents cell-by-cell from text.',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            indexes: {
-              type: 'array',
-              items: { type: 'integer' },
-              description:
-                'Attachment indexes to merge (0-based, from the attachment list). Omit to merge every spreadsheet attachment.',
-            },
-          },
-          required: [],
-        },
-      },
-    ],
-    executeTool: async (call) => {
-      if (call.name !== 'merge_attached_workbooks') {
-        return { output: `Unknown tool: ${call.name}`, isError: true, summary: call.name }
-      }
-      const list = deps.getAttachments()
-      const requested = Array.isArray((call.input as { indexes?: unknown }).indexes)
-        ? ((call.input as { indexes: unknown[] }).indexes.filter(
-            (value) => Number.isInteger(value) && (value as number) >= 0,
-          ) as number[])
-        : spreadsheetAttachmentIndexes(list)
-      const paths: string[] = []
-      const skipped: string[] = []
-      for (const index of requested) {
-        const attachment = list[index]
-        if (!attachment) {
-          skipped.push(`#${index} (no such attachment)`)
-        } else if (!SPREADSHEET_ATTACHMENT_EXTS.has(attachment.ext)) {
-          skipped.push(`${attachment.name} (not a spreadsheet)`)
-        } else {
-          paths.push(attachment.path)
-        }
-      }
-      if (paths.length === 0) {
-        return {
-          output:
-            'No spreadsheet attachments to merge. Ask the user to attach xlsx/xlsm/xls/csv files first.',
-          isError: true,
-          summary: 'merge: no sources',
-        }
-      }
-      try {
-        const result = await deps.mergePaths(paths)
-        const lines = [
-          `Merged ${result.importedSheets} sheets from ${result.files} files into the current workbook.`,
-          `New sheets: ${result.sheetNames.join(', ')}`,
-          'Source formulas were imported as computed values.',
-        ]
-        if (skipped.length > 0) lines.push(`Skipped: ${skipped.join('; ')}`)
-        return {
-          output: lines.join('\n'),
-          summary: `merged ${result.importedSheets} sheets`,
-        }
-      } catch (error: unknown) {
-        return {
-          output: `Merge failed: ${error instanceof Error ? error.message : String(error)}`,
-          isError: true,
-          summary: 'merge failed',
-        }
-      }
-    },
-  }
+ return {
+ id: 'workbook-merge',
+ systemPrompt: MERGE_SYSTEM_PROMPT,
+ tools: [
+ {
+ name: 'merge_attached_workbooks',
+ description:
+ 'Import every sheet of the attached spreadsheet files (xlsx/xlsm/xls/csv) into the current workbook, engine-side. ' +
+ 'Returns the created sheet names. Use this before analyzing or restructuring attached spreadsheet data; ' +
+ 'never rebuild attachment contents cell-by-cell from text.',
+ inputSchema: {
+ type: 'object',
+ properties: {
+ indexes: {
+ type: 'array',
+ items: { type: 'integer' },
+ description:
+ 'Attachment indexes to merge (0-based, from the attachment list). Omit to merge every spreadsheet attachment.',
+ },
+ },
+ required: [],
+ },
+ },
+ ],
+ executeTool: async (call) => {
+ if (call.name !== 'merge_attached_workbooks') {
+ return { output: `Unknown tool: ${call.name}`, isError: true, summary: call.name }
+ }
+ const list = deps.getAttachments()
+ const requested = Array.isArray((call.input as { indexes?: unknown }).indexes)
+ ? ((call.input as { indexes: unknown[] }).indexes.filter(
+ (value) => Number.isInteger(value) && (value as number) >= 0,
+ ) as number[])
+ : spreadsheetAttachmentIndexes(list)
+ const paths: string[] = []
+ const skipped: string[] = []
+ for (const index of requested) {
+ const attachment = list[index]
+ if (!attachment) {
+ skipped.push(`#${index} (no such attachment)`)
+ } else if (!SPREADSHEET_ATTACHMENT_EXTS.has(attachment.ext)) {
+ skipped.push(`${attachment.name} (not a spreadsheet)`)
+ } else {
+ paths.push(attachment.path)
+ }
+ }
+ if (paths.length === 0) {
+ return {
+ output:
+ 'No spreadsheet attachments to merge. Ask the user to attach xlsx/xlsm/xls/csv files first.',
+ isError: true,
+ summary: 'merge: no sources',
+ }
+ }
+ try {
+ const result = await deps.mergePaths(paths)
+ const lines = [
+ `Merged ${result.importedSheets} sheets from ${result.files} files into the current workbook.`,
+ `New sheets: ${result.sheetNames.join(', ')}`,
+ 'Source formulas were imported as computed values.',
+ ]
+ if (skipped.length > 0) lines.push(`Skipped: ${skipped.join('; ')}`)
+ return {
+ output: lines.join('\n'),
+ summary: `merged ${result.importedSheets} sheets`,
+ }
+ } catch (error: unknown) {
+ return {
+ output: `Merge failed: ${error instanceof Error ? error.message : String(error)}`,
+ isError: true,
+ summary: 'merge failed',
+ }
+ }
+ },
+ }
 }

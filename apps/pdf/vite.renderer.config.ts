@@ -11,19 +11,19 @@ const pdfjsRoot = dirname(dirname(require.resolve('pdfjs-dist/package.json')))
 const pdfjsDir = (sub: string) => normalizePath(join(pdfjsRoot, 'pdfjs-dist', sub))
 
 export default defineConfig({
-  root: 'src/renderer',
-  plugins: [
-    react(),
-    viteStaticCopy({
-      targets: [
-        { src: pdfjsDir('cmaps'), dest: 'pdfjs' },
-        { src: pdfjsDir('standard_fonts'), dest: 'pdfjs' },
-        { src: pdfjsDir('wasm'), dest: 'pdfjs' },
-      ],
-    }),
-  ],
-  server: {
-    port: Number(process.env.PDF_DEV_PORT) || 5176,
-    strictPort: true,
-  },
+ root: 'src/renderer',
+ plugins: [
+ react(),
+ viteStaticCopy({
+ targets: [
+ { src: pdfjsDir('cmaps'), dest: 'pdfjs' },
+ { src: pdfjsDir('standard_fonts'), dest: 'pdfjs' },
+ { src: pdfjsDir('wasm'), dest: 'pdfjs' },
+ ],
+ }),
+ ],
+ server: {
+ port: Number(process.env.PDF_DEV_PORT) || 5176,
+ strictPort: true,
+ },
 })

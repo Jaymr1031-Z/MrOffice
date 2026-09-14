@@ -23,95 +23,95 @@ const NOTIFICATION_MUTATION = 'formula.mutation.set-formula-calculation-notifica
 export const FORMULA_STREAM_HOLD_MS = 1000
 
 interface TriggerControllerInternals {
-  _executingDirtyData?: Record<string, unknown>
-  _executionInProgressParams?: unknown
-  _restartCalculation?: boolean
+ _executingDirtyData?: Record<string, unknown>
+ _executionInProgressParams?: unknown
+ _restartCalculation?: boolean
 }
 
 interface HoldState {
-  lastChunkAt: number
-  vetoed: boolean
-  inProgress: boolean
-  timer: ReturnType<typeof setTimeout> | null
+ lastChunkAt: number
+ vetoed: boolean
+ inProgress: boolean
+ timer: ReturnType<typeof setTimeout> | null
 }
 
 const states = new WeakMap<UniverRuntime, HoldState>()
 let current: HoldState | null = null
 
 export function hasDirtyData(dirty: Record<string, unknown> | undefined): boolean {
-  if (!dirty) return false
-  return Object.values(dirty).some((value) =>
-    Array.isArray(value)
-      ? value.length > 0
-      : value && typeof value === 'object'
-        ? Object.keys(value).length > 0
-        : Boolean(value),
-  )
+ if (!dirty) return false
+ return Object.values(dirty).some((value) =>
+ Array.isArray(value)
+ ? value.length > 0
+ : value && typeof value === 'object'
+ ? Object.keys(value).length > 0
+ : Boolean(value),
+ )
 }
 
 /** Called by the importer after every file-data chunk lands in the grid. */
 export function noteFormulaStreamChunk(): void {
-  if (!current) return
-  current.lastChunkAt = Date.now()
+ if (!current) return
+ current.lastChunkAt = Date.now()
 }
 
 export function installFormulaStreamHold(runtime: UniverRuntime): void {
-  if (states.has(runtime)) {
-    current = states.get(runtime) ?? null
-    return
-  }
-  const state: HoldState = { lastChunkAt: 0, vetoed: false, inProgress: false, timer: null }
-  states.set(runtime, state)
-  current = state
-  const injector = runtime.univer.__getInjector()
-  const commandService = injector.get(ICommandService)
-  const holding = () => Date.now() - state.lastChunkAt < FORMULA_STREAM_HOLD_MS
+ if (states.has(runtime)) {
+ current = states.get(runtime) ?? null
+ return
+ }
+ const state: HoldState = { lastChunkAt: 0, vetoed: false, inProgress: false, timer: null }
+ states.set(runtime, state)
+ current = state
+ const injector = runtime.univer.__getInjector()
+ const commandService = injector.get(ICommandService)
+ const holding = () => Date.now() - state.lastChunkAt < FORMULA_STREAM_HOLD_MS
 
-  const flush = () => {
-    state.timer = null
-    if (holding() || state.inProgress) {
-      schedule()
-      return
-    }
-    state.vetoed = false
-    const controller = injector.get(TriggerCalculationController) as unknown as
-      TriggerControllerInternals | undefined
-    if (!controller) return
-    // A restart the controller dispatched while held was vetoed, leaving its
-    // "in progress" bookkeeping stale; clear it before the merged cycle.
-    controller._executionInProgressParams = null
-    controller._restartCalculation = false
-    if (!hasDirtyData(controller._executingDirtyData)) return
-    void commandService.executeCommand(
-      START_MUTATION,
-      { ...controller._executingDirtyData },
-      {
-        onlyLocal: true,
-      },
-    )
-  }
-  const schedule = () => {
-    if (state.timer) clearTimeout(state.timer)
-    state.timer = setTimeout(flush, FORMULA_STREAM_HOLD_MS + 20)
-  }
+ const flush = () => {
+ state.timer = null
+ if (holding() || state.inProgress) {
+ schedule()
+ return
+ }
+ state.vetoed = false
+ const controller = injector.get(TriggerCalculationController) as unknown as
+ TriggerControllerInternals | undefined
+ if (!controller) return
+ // A restart the controller dispatched while held was vetoed, leaving its
+ // "in progress" bookkeeping stale; clear it before the merged cycle.
+ controller._executionInProgressParams = null
+ controller._restartCalculation = false
+ if (!hasDirtyData(controller._executingDirtyData)) return
+ void commandService.executeCommand(
+ START_MUTATION,
+ { ...controller._executingDirtyData },
+ {
+ onlyLocal: true,
+ },
+ )
+ }
+ const schedule = () => {
+ if (state.timer) clearTimeout(state.timer)
+ state.timer = setTimeout(flush, FORMULA_STREAM_HOLD_MS + 20)
+ }
 
-  commandService.beforeCommandExecuted((command) => {
-    if (command.id !== START_MUTATION || !holding()) return
-    const params = command.params as { forceCalculation?: boolean } | undefined
-    if (params?.forceCalculation) return
-    // Same stack hygiene as the manual-calculation veto in calc-options.ts.
-    const stack = (commandService as unknown as { _commandExecutionStack?: unknown[] })
-      ._commandExecutionStack
-    const index = stack?.indexOf(command) ?? -1
-    if (index >= 0) stack?.splice(index, 1)
-    state.vetoed = true
-    schedule()
-    throw new CustomCommandExecutionError('formula calculation held while file data streams in')
-  })
-  commandService.onCommandExecuted((command) => {
-    if (command.id === STOP_MUTATION) state.inProgress = false
-    if (command.id !== NOTIFICATION_MUTATION) return
-    const params = command.params as { stageInfo?: unknown } | undefined
-    state.inProgress = params?.stageInfo != null
-  })
+ commandService.beforeCommandExecuted((command) => {
+ if (command.id !== START_MUTATION || !holding()) return
+ const params = command.params as { forceCalculation?: boolean } | undefined
+ if (params?.forceCalculation) return
+ // Same stack hygiene as the manual-calculation veto in calc-options.ts.
+ const stack = (commandService as unknown as { _commandExecutionStack?: unknown[] })
+ ._commandExecutionStack
+ const index = stack?.indexOf(command) ?? -1
+ if (index >= 0) stack?.splice(index, 1)
+ state.vetoed = true
+ schedule()
+ throw new CustomCommandExecutionError('formula calculation held while file data streams in')
+ })
+ commandService.onCommandExecuted((command) => {
+ if (command.id === STOP_MUTATION) state.inProgress = false
+ if (command.id !== NOTIFICATION_MUTATION) return
+ const params = command.params as { stageInfo?: unknown } | undefined
+ state.inProgress = params?.stageInfo != null
+ })
 }

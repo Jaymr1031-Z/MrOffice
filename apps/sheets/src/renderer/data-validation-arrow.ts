@@ -1,4 +1,4 @@
 export {
-  installActiveCellDataValidationChrome,
-  installActiveCellDataValidationDropdown,
+ installActiveCellDataValidationChrome,
+ installActiveCellDataValidationDropdown,
 } from './data-validation-dropdown'

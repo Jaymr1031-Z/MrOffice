@@ -14,7 +14,7 @@ export const SET_ROW_IS_AUTO_HEIGHT_COMMAND = 'sheet.command.set-row-is-auto-hei
 
 /// Full-row spans: selections made from the row headers or a select-all.
 function isFullRowSpan(range: IRange, columnCount: number): boolean {
-  return range.startColumn === 0 && range.endColumn >= columnCount - 1
+ return range.startColumn === 0 && range.endColumn >= columnCount - 1
 }
 
 /**
@@ -24,54 +24,54 @@ function isFullRowSpan(range: IRange, columnCount: number): boolean {
  * covering more than one row in total (Ctrl-selected disjoint spans count).
  */
 export function expandAutoHeightRanges(
-  commandRanges: readonly IRange[],
-  selections: readonly IRange[],
-  columnCount: number,
+ commandRanges: readonly IRange[],
+ selections: readonly IRange[],
+ columnCount: number,
 ): IRange[] | null {
-  if (commandRanges.length !== 1) return null
-  const clicked = commandRanges[0]
-  if (clicked === undefined || clicked.startRow !== clicked.endRow) return null
-  const rowSpans = selections.filter((range) => isFullRowSpan(range, columnCount))
-  if (
-    !rowSpans.some(
-      (range) => range.startRow <= clicked.startRow && clicked.startRow <= range.endRow,
-    )
-  ) {
-    return null
-  }
-  const totalRows = rowSpans.reduce((sum, range) => sum + (range.endRow - range.startRow + 1), 0)
-  if (totalRows <= 1) return null
-  return rowSpans.map((range) => ({
-    startRow: range.startRow,
-    endRow: range.endRow,
-    startColumn: clicked.startColumn,
-    endColumn: clicked.endColumn,
-  }))
+ if (commandRanges.length !== 1) return null
+ const clicked = commandRanges[0]
+ if (clicked === undefined || clicked.startRow !== clicked.endRow) return null
+ const rowSpans = selections.filter((range) => isFullRowSpan(range, columnCount))
+ if (
+ !rowSpans.some(
+ (range) => range.startRow <= clicked.startRow && clicked.startRow <= range.endRow,
+ )
+ ) {
+ return null
+ }
+ const totalRows = rowSpans.reduce((sum, range) => sum + (range.endRow - range.startRow + 1), 0)
+ if (totalRows <= 1) return null
+ return rowSpans.map((range) => ({
+ startRow: range.startRow,
+ endRow: range.endRow,
+ startColumn: clicked.startColumn,
+ endColumn: clicked.endColumn,
+ }))
 }
 
 export function installMultiRowAutofit(runtime: UniverRuntime): { dispose(): void } {
-  let redispatching = false
-  return runtime.univerAPI.addEvent(runtime.univerAPI.Event.BeforeCommandExecute, (event) => {
-    if (redispatching || event.id !== SET_ROW_IS_AUTO_HEIGHT_COMMAND) return
-    const params = (event.params ?? {}) as { ranges?: IRange[] }
-    if (!params.ranges) return
-    const worksheet = runtime.univerAPI.getActiveWorkbook()?.getActiveSheet()
-    if (!worksheet) return
-    const selections = (worksheet.getSelection()?.getActiveRangeList() ?? []).map((range) =>
-      range.getRange(),
-    )
-    const expanded = expandAutoHeightRanges(
-      params.ranges,
-      selections,
-      worksheet.getSheet().getColumnCount(),
-    )
-    if (expanded === null) return
-    event.cancel = true
-    redispatching = true
-    void runtime.univerAPI
-      .executeCommand(SET_ROW_IS_AUTO_HEIGHT_COMMAND, { ...event.params, ranges: expanded })
-      .finally(() => {
-        redispatching = false
-      })
-  })
+ let redispatching = false
+ return runtime.univerAPI.addEvent(runtime.univerAPI.Event.BeforeCommandExecute, (event) => {
+ if (redispatching || event.id !== SET_ROW_IS_AUTO_HEIGHT_COMMAND) return
+ const params = (event.params ?? {}) as { ranges?: IRange[] }
+ if (!params.ranges) return
+ const worksheet = runtime.univerAPI.getActiveWorkbook()?.getActiveSheet()
+ if (!worksheet) return
+ const selections = (worksheet.getSelection()?.getActiveRangeList() ?? []).map((range) =>
+ range.getRange(),
+ )
+ const expanded = expandAutoHeightRanges(
+ params.ranges,
+ selections,
+ worksheet.getSheet().getColumnCount(),
+ )
+ if (expanded === null) return
+ event.cancel = true
+ redispatching = true
+ void runtime.univerAPI
+ .executeCommand(SET_ROW_IS_AUTO_HEIGHT_COMMAND, { ...event.params, ranges: expanded })
+ .finally(() => {
+ redispatching = false
+ })
+ })
 }

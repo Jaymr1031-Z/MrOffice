@@ -6,12 +6,12 @@ import type { AiChatMessage } from './AiChatPanel'
  * transcript ("Not sent" bubble + raw error + the same text again).
  */
 export function pruneFailedExchange(
-  chat: readonly AiChatMessage[],
-  index: number,
+ chat: readonly AiChatMessage[],
+ index: number,
 ): readonly AiChatMessage[] {
-  const entry = chat[index]
-  if (!entry || entry.role !== 'user' || !entry.undelivered) return chat
-  const partner = chat[index + 1]
-  const count = partner && partner.role === 'assistant' && partner.isError ? 2 : 1
-  return [...chat.slice(0, index), ...chat.slice(index + count)]
+ const entry = chat[index]
+ if (!entry || entry.role !== 'user' || !entry.undelivered) return chat
+ const partner = chat[index + 1]
+ const count = partner && partner.role === 'assistant' && partner.isError ? 2 : 1
+ return [...chat.slice(0, index), ...chat.slice(index + count)]
 }

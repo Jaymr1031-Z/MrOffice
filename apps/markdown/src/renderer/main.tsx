@@ -15,21 +15,21 @@ import { installScreenTips } from '@genoffice/ui'
 installScreenTips()
 
 function applyTheme(theme: UiTheme): void {
-  if (theme === 'system') document.documentElement.removeAttribute('data-theme')
-  else document.documentElement.setAttribute('data-theme', theme)
+ if (theme === 'system') document.documentElement.removeAttribute('data-theme')
+ else document.documentElement.setAttribute('data-theme', theme)
 }
 
 void (async () => {
-  const [lang, theme] = await Promise.all([
-    window.markdownApi.getLanguage().catch(() => 'zh' as const),
-    window.markdownApi.getTheme().catch(() => 'system' as const),
-  ])
-  document.documentElement.lang = htmlLang(lang as Lang)
-  applyTheme(theme)
-  window.markdownApi.onThemeChanged(applyTheme)
-  createRoot(document.getElementById('root')!).render(
-    <LocaleProvider initial={lang}>
-      <App />
-    </LocaleProvider>,
-  )
+ const [lang, theme] = await Promise.all([
+ window.markdownApi.getLanguage().catch(() => 'zh' as const),
+ window.markdownApi.getTheme().catch(() => 'system' as const),
+ ])
+ document.documentElement.lang = htmlLang(lang as Lang)
+ applyTheme(theme)
+ window.markdownApi.onThemeChanged(applyTheme)
+ createRoot(document.getElementById('root')!).render(
+ <LocaleProvider initial={lang}>
+ <App />
+ </LocaleProvider>,
+ )
 })()

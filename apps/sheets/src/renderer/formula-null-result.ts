@@ -19,47 +19,47 @@ import { IFormulaRuntimeService, NumberValueObject } from '@univerjs/engine-form
 import type { UniverRuntime } from './univer-state'
 
 interface VariantLike {
-  isValueObject?(): boolean
-  isReferenceObject?(): boolean
-  isArray?(): boolean
-  isNull?(): boolean
-  getRangePosition?(): {
-    startRow: number
-    endRow: number
-    startColumn: number
-    endColumn: number
-  }
-  getFirstCell?(): { isNull?(): boolean }
+ isValueObject?(): boolean
+ isReferenceObject?(): boolean
+ isArray?(): boolean
+ isNull?(): boolean
+ getRangePosition?(): {
+ startRow: number
+ endRow: number
+ startColumn: number
+ endColumn: number
+ }
+ getFirstCell?(): { isNull?(): boolean }
 }
 
 export function coerceNullResult<T>(variant: T): T | NumberValueObject {
-  const value = variant as VariantLike | null | undefined
-  if (value?.isValueObject?.() && !value.isArray?.() && value.isNull?.()) {
-    return NumberValueObject.create(0)
-  }
-  // Single-cell reference root resolving to an empty (style-only) cell:
-  // multi-cell references keep spilling as arrays.
-  if (value?.isReferenceObject?.()) {
-    const range = value.getRangePosition?.()
-    if (
-      range &&
-      range.startRow === range.endRow &&
-      range.startColumn === range.endColumn &&
-      value.getFirstCell?.()?.isNull?.()
-    ) {
-      return NumberValueObject.create(0)
-    }
-  }
-  return variant
+ const value = variant as VariantLike | null | undefined
+ if (value?.isValueObject?.() && !value.isArray?.() && value.isNull?.()) {
+ return NumberValueObject.create(0)
+ }
+ // Single-cell reference root resolving to an empty (style-only) cell:
+ // multi-cell references keep spilling as arrays.
+ if (value?.isReferenceObject?.()) {
+ const range = value.getRangePosition?.()
+ if (
+ range &&
+ range.startRow === range.endRow &&
+ range.startColumn === range.endColumn &&
+ value.getFirstCell?.()?.isNull?.()
+ ) {
+ return NumberValueObject.create(0)
+ }
+ }
+ return variant
 }
 
 export function installFormulaNullResultFix(runtime: UniverRuntime): { dispose(): void } {
-  const runtimeService = runtime.univer.__getInjector().get(IFormulaRuntimeService)
-  const original = runtimeService.setRuntimeData.bind(runtimeService)
-  runtimeService.setRuntimeData = (variant) => original(coerceNullResult(variant))
-  return {
-    dispose() {
-      runtimeService.setRuntimeData = original
-    },
-  }
+ const runtimeService = runtime.univer.__getInjector().get(IFormulaRuntimeService)
+ const original = runtimeService.setRuntimeData.bind(runtimeService)
+ runtimeService.setRuntimeData = (variant) => original(coerceNullResult(variant))
+ return {
+ dispose() {
+ runtimeService.setRuntimeData = original
+ },
+ }
 }

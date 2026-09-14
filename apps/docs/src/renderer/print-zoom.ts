@@ -13,19 +13,19 @@ const MAX_ZOOM = 10
 const MIN_ZOOM = 0.5
 
 export function printZoom(dpr: number = window.devicePixelRatio): number {
-  if (!(dpr > 0) || Math.abs(dpr - 1) < 1e-3) return 1
-  return Math.min(Math.max(dpr, MIN_ZOOM), MAX_ZOOM)
+ if (!(dpr > 0) || Math.abs(dpr - 1) < 1e-3) return 1
+ return Math.min(Math.max(dpr, MIN_ZOOM), MAX_ZOOM)
 }
 
 const previewRoot = () => document.querySelector<HTMLElement>('.pagination-preview')
 
 /** Zooms the preview sheets for print (print media only) and returns the job's print scale. */
 export function setPrintZoom(): number {
-  const zoom = printZoom()
-  if (zoom !== 1) previewRoot()?.style.setProperty('--pv-print-zoom', String(zoom))
-  return 1 / zoom
+ const zoom = printZoom()
+ if (zoom !== 1) previewRoot()?.style.setProperty('--pv-print-zoom', String(zoom))
+ return 1 / zoom
 }
 
 export function clearPrintZoom(): void {
-  previewRoot()?.style.removeProperty('--pv-print-zoom')
+ previewRoot()?.style.removeProperty('--pv-print-zoom')
 }

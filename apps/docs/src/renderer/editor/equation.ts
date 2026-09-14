@@ -9,7 +9,7 @@ import type { PmNode } from './convert'
  */
 /** MathML for inline flow (ommlToMathML emits display="block" for equations) */
 export function inlineMathML(omml: string): string {
-  return ommlToMathML(omml).replace(/ display="block"/g, ' display="inline"')
+ return ommlToMathML(omml).replace(/ display="block"/g, ' display="inline"')
 }
 
 /**
@@ -17,35 +17,35 @@ export function inlineMathML(omml: string): string {
  * Flows with paragraph text; saves as a Run.math (<m:oMath> emitted verbatim).
  */
 export function inlineEquationNodeJson(latex: string): PmNode {
-  const inner = latexToOmml(latex)
-  const omml = `<m:oMath>${inner}</m:oMath>`
-  return {
-    type: 'docInlineMath',
-    attrs: {
-      omml,
-      mathml: inlineMathML(omml),
-      latex: latex.trim(),
-      text: mathTokensOf(omml).join(''),
-    },
-  }
+ const inner = latexToOmml(latex)
+ const omml = `<m:oMath>${inner}</m:oMath>`
+ return {
+ type: 'docInlineMath',
+ attrs: {
+ omml,
+ mathml: inlineMathML(omml),
+ latex: latex.trim(),
+ text: mathTokensOf(omml).join(''),
+ },
+ }
 }
 
 export function equationBlockJson(latex: string): PmNode {
-  const omml = latexToOmml(latex)
-  return {
-    type: 'docProtected',
-    attrs: {
-      docxIndex: null,
-      blockType: 'passthrough',
-      label: t('editorEquation'),
-      previewText: latex.trim(),
-      genXml: mathParagraphXml(omml),
-      formulaDisplay: {
-        tokens: mathTokensOf(omml),
-        mathml: ommlToMathML(`<m:oMath>${omml}</m:oMath>`),
-        omml: `<m:oMath>${omml}</m:oMath>`,
-        latex: latex.trim(),
-      },
-    },
-  }
+ const omml = latexToOmml(latex)
+ return {
+ type: 'docProtected',
+ attrs: {
+ docxIndex: null,
+ blockType: 'passthrough',
+ label: t('editorEquation'),
+ previewText: latex.trim(),
+ genXml: mathParagraphXml(omml),
+ formulaDisplay: {
+ tokens: mathTokensOf(omml),
+ mathml: ommlToMathML(`<m:oMath>${omml}</m:oMath>`),
+ omml: `<m:oMath>${omml}</m:oMath>`,
+ latex: latex.trim(),
+ },
+ },
+ }
 }

@@ -8,21 +8,21 @@ import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
  * Spread the returned ref/onKeyDown onto the modal backdrop element.
  */
 export function useModalKeys(onClose: () => void) {
-  const ref = useRef<HTMLDivElement>(null)
+ const ref = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const el = ref.current
-    if (!el || el.contains(document.activeElement)) return
-    const first = el.querySelector<HTMLElement>('input, textarea, select, button')
-    ;(first ?? el).focus()
-  }, [])
+ useEffect(() => {
+ const el = ref.current
+ if (!el || el.contains(document.activeElement)) return
+ const first = el.querySelector<HTMLElement>('input, textarea, select, button')
+ ;(first ?? el).focus()
+ }, [])
 
-  const onKeyDown = (e: ReactKeyboardEvent) => {
-    if (e.key !== 'Escape') return
-    e.preventDefault()
-    e.stopPropagation()
-    onClose()
-  }
+ const onKeyDown = (e: ReactKeyboardEvent) => {
+ if (e.key !== 'Escape') return
+ e.preventDefault()
+ e.stopPropagation()
+ onClose()
+ }
 
-  return { ref, onKeyDown }
+ return { ref, onKeyDown }
 }

@@ -161,8 +161,8 @@ describe('brief provenance gate (regenerate_slide / generate_deck)', () => {
   const cloudAccess = () =>
     mkAccess({
       regenerateSlide: async () => null,
-      generatePageCloud: async () => ({ ok: false, error: 'cloud down' }),
-      isCloudPageGenEnabled: async () => true,
+      generatePageLocal: async () => ({ ok: false, error: 'cloud down' }),
+
       landGeneratedPages: async () => ({ ok: true, pages: 1 }),
     })
 

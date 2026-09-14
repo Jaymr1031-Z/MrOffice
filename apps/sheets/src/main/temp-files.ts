@@ -9,18 +9,18 @@ const IMPORT_DIRECTORY_NAME = new RegExp(`^${UUID}$`, 'i')
 const OWNED_PASTED_FILE = /^pasted-[0-9]{8}-[0-9]{6}-[0-9]+\.(?:png|jpe?g|gif|webp)$/i
 
 export interface SessionTemporaryResources {
-  readonly snapshotPath: string
-  readonly importTempDir?: string | undefined
+ readonly snapshotPath: string
+ readonly importTempDir?: string | undefined
 }
 
 interface CleanupSessionResourcesOptions extends SessionTemporaryResources {
-  readonly tempRoot: string
-  readonly closeSidecar: () => Promise<unknown>
+ readonly tempRoot: string
+ readonly closeSidecar: () => Promise<unknown>
 }
 
 function isDirectOwnedChild(path: string, parent: string, namePattern: RegExp): boolean {
-  const resolvedPath = resolve(path)
-  return dirname(resolvedPath) === resolve(parent) && namePattern.test(basename(resolvedPath))
+ const resolvedPath = resolve(path)
+ return dirname(resolvedPath) === resolve(parent) && namePattern.test(basename(resolvedPath))
 }
 
 /**
@@ -29,29 +29,29 @@ function isDirectOwnedChild(path: string, parent: string, namePattern: RegExp): 
  * temp root and filename shape.
  */
 export async function cleanupSessionResources(
-  options: CleanupSessionResourcesOptions,
+ options: CleanupSessionResourcesOptions,
 ): Promise<void> {
-  try {
-    await options.closeSidecar()
-  } catch {
-    // Continue with owned temp cleanup even when the sidecar is already gone.
-  }
-  const snapshotRoot = join(options.tempRoot, 'genoffice-sheets-sessions')
-  if (isDirectOwnedChild(options.snapshotPath, snapshotRoot, SESSION_SNAPSHOT_NAME)) {
-    await rm(options.snapshotPath, { force: true }).catch(() => undefined)
-  }
-  if (options.importTempDir !== undefined) {
-    await cleanupImportTempDirectory(options.tempRoot, options.importTempDir)
-  }
+ try {
+ await options.closeSidecar()
+ } catch {
+ // Continue with owned temp cleanup even when the sidecar is already gone.
+ }
+ const snapshotRoot = join(options.tempRoot, 'genoffice-sheets-sessions')
+ if (isDirectOwnedChild(options.snapshotPath, snapshotRoot, SESSION_SNAPSHOT_NAME)) {
+ await rm(options.snapshotPath, { force: true }).catch(() => undefined)
+ }
+ if (options.importTempDir !== undefined) {
+ await cleanupImportTempDirectory(options.tempRoot, options.importTempDir)
+ }
 }
 
 export async function cleanupImportTempDirectory(
-  tempRoot: string,
-  importTempDir: string,
+ tempRoot: string,
+ importTempDir: string,
 ): Promise<void> {
-  const importRoot = join(tempRoot, 'genoffice-imports')
-  if (!isDirectOwnedChild(importTempDir, importRoot, IMPORT_DIRECTORY_NAME)) return
-  await rm(importTempDir, { recursive: true, force: true }).catch(() => undefined)
+ const importRoot = join(tempRoot, 'genoffice-imports')
+ if (!isDirectOwnedChild(importTempDir, importRoot, IMPORT_DIRECTORY_NAME)) return
+ await rm(importTempDir, { recursive: true, force: true }).catch(() => undefined)
 }
 
 /**
@@ -59,29 +59,29 @@ export async function cleanupImportTempDirectory(
  * directories, symlinks, and even similarly named nested paths are untouched.
  */
 export async function cleanupExpiredPastedFiles(
-  tempRoot: string,
-  now = Date.now(),
+ tempRoot: string,
+ now = Date.now(),
 ): Promise<string[]> {
-  const dir = join(tempRoot, 'genoffice-pasted')
-  const cutoff = now - PASTED_FILE_TTL_MS
-  const removed: string[] = []
-  let entries
-  try {
-    entries = await readdir(dir, { withFileTypes: true })
-  } catch {
-    return removed
-  }
-  for (const entry of entries) {
-    if (!entry.isFile() || !OWNED_PASTED_FILE.test(entry.name)) continue
-    const path = join(dir, entry.name)
-    try {
-      const info = await lstat(path)
-      if (!info.isFile() || info.mtimeMs >= cutoff) continue
-      await unlink(path)
-      removed.push(path)
-    } catch {
-      // Best-effort startup cleanup; another tab/process may win the race.
-    }
-  }
-  return removed
+ const dir = join(tempRoot, 'genoffice-pasted')
+ const cutoff = now - PASTED_FILE_TTL_MS
+ const removed: string[] = []
+ let entries
+ try {
+ entries = await readdir(dir, { withFileTypes: true })
+ } catch {
+ return removed
+ }
+ for (const entry of entries) {
+ if (!entry.isFile() || !OWNED_PASTED_FILE.test(entry.name)) continue
+ const path = join(dir, entry.name)
+ try {
+ const info = await lstat(path)
+ if (!info.isFile() || info.mtimeMs >= cutoff) continue
+ await unlink(path)
+ removed.push(path)
+ } catch {
+ // Best-effort startup cleanup; another tab/process may win the race.
+ }
+ }
+ return removed
 }

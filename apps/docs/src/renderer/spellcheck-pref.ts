@@ -4,5 +4,5 @@
 export const SPELLCHECK_KEY = 'aidocs.spellcheck'
 
 export function spellcheckEnabled(): boolean {
-  return localStorage.getItem(SPELLCHECK_KEY) !== '0'
+ return localStorage.getItem(SPELLCHECK_KEY) !== '0'
 }

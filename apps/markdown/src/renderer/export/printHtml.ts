@@ -3,17 +3,17 @@ import katexCss from 'katex/dist/katex.min.css?inline'
 /** Print-theme CSS: mirrors the editor typography so the PDF matches the canvas */
 const PRINT_CSS = `
 @page {
-  margin: 2cm;
-  size: auto;
+ margin: 2cm;
+ size: auto;
 }
 * { box-sizing: border-box; }
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-  color: #1f2328;
-  font-size: 12pt;
-  line-height: 1.7;
-  word-wrap: break-word;
+ margin: 0;
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+ color: #1f2328;
+ font-size: 12pt;
+ line-height: 1.7;
+ word-wrap: break-word;
 }
 h1, h2, h3, h4, h5, h6 { line-height: 1.3; margin: 1.3em 0 0.5em; font-weight: 650; break-after: avoid; }
 h1 { font-size: 2em; padding-bottom: 0.25em; border-bottom: 1px solid #e4e7eb; }
@@ -40,10 +40,10 @@ ul[data-type='taskList'] li { display: flex; gap: 8px; }
 ul[data-type='taskList'] li > label { flex: 0 0 auto; margin-top: 0.3em; }
 ul[data-type='taskList'] li[data-checked='true'] > div { color: #8b929b; text-decoration: line-through; }
 @media print {
-  /* High-quality rendering for text */
-  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  pre, blockquote, table { break-inside: avoid; }
-  img { max-width: 100% !important; page-break-inside: avoid; }
+ /* High-quality rendering for text */
+ body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+ pre, blockquote, table { break-inside: avoid; }
+ img { max-width: 100% !important; page-break-inside: avoid; }
 }
 `
 
@@ -53,29 +53,29 @@ ul[data-type='taskList'] li[data-checked='true'] > div { color: #8b929b; text-de
  * the clone.
  */
 export function buildPrintHtml(editorRoot: HTMLElement, title: string): string {
-  const clone = editorRoot.cloneNode(true) as HTMLElement
-  clone.removeAttribute('contenteditable')
-  for (const el of clone.querySelectorAll('[contenteditable]'))
-    el.removeAttribute('contenteditable')
+ const clone = editorRoot.cloneNode(true) as HTMLElement
+ clone.removeAttribute('contenteditable')
+ for (const el of clone.querySelectorAll('[contenteditable]'))
+ el.removeAttribute('contenteditable')
 
-  // editor-only code block chrome (language picker + copy button) must not print
-  for (const bar of clone.querySelectorAll('.md-codeblock-bar')) bar.remove()
+ // editor-only code block chrome (language picker + copy button) must not print
+ for (const bar of clone.querySelectorAll('.md-codeblock-bar')) bar.remove()
 
-  const escapedTitle = title.replace(/&/g, '&amp;').replace(/</g, '&lt;')
-  // <base> lets the inlined KaTeX CSS resolve its relative font URLs from the
-  // print iframe (which otherwise has no document URL to resolve against)
-  const escapedBase = document.baseURI.replace(/"/g, '&quot;')
-  return [
-    '<!doctype html>',
-    '<html>',
-    '<head>',
-    '<meta charset="utf-8">',
-    `<base href="${escapedBase}">`,
-    `<title>${escapedTitle}</title>`,
-    `<style>${katexCss}</style>`,
-    `<style>${PRINT_CSS}</style>`,
-    '</head>',
-    `<body>${clone.innerHTML}</body>`,
-    '</html>',
-  ].join('\n')
+ const escapedTitle = title.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+ // <base> lets the inlined KaTeX CSS resolve its relative font URLs from the
+ // print iframe (which otherwise has no document URL to resolve against)
+ const escapedBase = document.baseURI.replace(/"/g, '&quot;')
+ return [
+ '<!doctype html>',
+ '<html>',
+ '<head>',
+ '<meta charset="utf-8">',
+ `<base href="${escapedBase}">`,
+ `<title>${escapedTitle}</title>`,
+ `<style>${katexCss}</style>`,
+ `<style>${PRINT_CSS}</style>`,
+ '</head>',
+ `<body>${clone.innerHTML}</body>`,
+ '</html>',
+ ].join('\n')
 }

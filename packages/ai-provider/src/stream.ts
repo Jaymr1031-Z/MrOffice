@@ -11,7 +11,7 @@ import type { AiProviderConfig, AiProviderId } from './types'
 export { streamAnthropic } from './protocols/anthropic'
 export { streamGemini } from './protocols/gemini'
 export { streamOpenAiCompatible } from './protocols/openai-compatible'
-export { AiCreditsError, sseLines } from './protocols/shared'
+export { sseLines } from './protocols/shared'
 export type { StreamCallbacks } from './protocols/shared'
 
 /** route a streaming, tool-calling-capable turn by provider id */

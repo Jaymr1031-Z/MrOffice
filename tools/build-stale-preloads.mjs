@@ -40,7 +40,14 @@ const stale = APPS.filter((app) => {
 if (stale.length) {
   console.log(`Rebuilding stale preloads: ${stale.join(', ')}`)
   for (const app of stale) {
-    const r = spawnSync('npm', ['run', 'build', '-w', `@genoffice/${app}`], { stdio: 'inherit' })
+    // shell: true is required on Windows: Node no longer resolves bare `npm`
+    // to npm.cmd, and spawning npm.cmd directly is blocked (EINVAL) by the
+    // .bat/.cmd command-injection hardening. Without it this exits ENOENT and
+    // `npm run dev` aborts before any dev server starts.
+    const r = spawnSync('npm', ['run', 'build', '-w', `@genoffice/${app}`], {
+      stdio: 'inherit',
+      shell: true,
+    })
     if (r.status !== 0) process.exit(r.status ?? 1)
   }
 }

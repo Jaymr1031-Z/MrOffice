@@ -24,37 +24,37 @@ export const MAX_SHOWS = 2
 export const RESHOW_AFTER_MS = 14 * 24 * 60 * 60 * 1000
 
 export interface StarPromptState {
-  /** ms epoch of the first launch that carried this feature */
-  firstRunAt?: number
-  /** documents opened since firstRunAt (value-moment proxy) */
-  docOpens?: number
-  /** times the prompt has been displayed */
-  shownCount?: number
-  /** ms epoch of the last display */
-  lastShownAt?: number
-  /** true once the user reacted (went to GitHub / already starred) — never show again */
-  resolved?: boolean
+ /** ms epoch of the first launch that carried this feature */
+ firstRunAt?: number
+ /** documents opened since firstRunAt (value-moment proxy) */
+ docOpens?: number
+ /** times the prompt has been displayed */
+ shownCount?: number
+ /** ms epoch of the last display */
+ lastShownAt?: number
+ /** true once the user reacted (went to GitHub / already starred) — never show again */
+ resolved?: boolean
 }
 
 /** tolerate missing/corrupt settings values */
 export function asStarPromptState(value: unknown): StarPromptState {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
-  const raw = value as Record<string, unknown>
-  const num = (v: unknown): number | undefined =>
-    typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : undefined
-  return {
-    firstRunAt: num(raw.firstRunAt),
-    docOpens: num(raw.docOpens),
-    shownCount: num(raw.shownCount),
-    lastShownAt: num(raw.lastShownAt),
-    resolved: raw.resolved === true,
-  }
+ if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+ const raw = value as Record<string, unknown>
+ const num = (v: unknown): number | undefined =>
+ typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : undefined
+ return {
+ firstRunAt: num(raw.firstRunAt),
+ docOpens: num(raw.docOpens),
+ shownCount: num(raw.shownCount),
+ lastShownAt: num(raw.lastShownAt),
+ resolved: raw.resolved === true,
+ }
 }
 
 /** app startup: stamp the install-age clock once */
 export function withFirstRun(state: StarPromptState, now: number): StarPromptState {
-  if (state.firstRunAt !== undefined) return state
-  return { ...state, firstRunAt: now }
+ if (state.firstRunAt !== undefined) return state
+ return { ...state, firstRunAt: now }
 }
 
 /**
@@ -63,18 +63,18 @@ export function withFirstRun(state: StarPromptState, now: number): StarPromptSta
  * documents"). Stops once no prompt can ever show again.
  */
 export function withDocOpen(state: StarPromptState): StarPromptState {
-  if (state.resolved || (state.shownCount ?? 0) >= MAX_SHOWS) return state
-  return { ...state, docOpens: (state.docOpens ?? 0) + 1 }
+ if (state.resolved || (state.shownCount ?? 0) >= MAX_SHOWS) return state
+ return { ...state, docOpens: (state.docOpens ?? 0) + 1 }
 }
 
 export function shouldShowStarPrompt(state: StarPromptState, now: number): boolean {
-  if (state.resolved) return false
-  const shown = state.shownCount ?? 0
-  if (shown >= MAX_SHOWS) return false
-  if (state.firstRunAt === undefined || now - state.firstRunAt < MIN_AGE_MS) return false
-  if ((state.docOpens ?? 0) < MIN_DOC_OPENS) return false
-  if (shown > 0 && now - (state.lastShownAt ?? 0) < RESHOW_AFTER_MS) return false
-  return true
+ if (state.resolved) return false
+ const shown = state.shownCount ?? 0
+ if (shown >= MAX_SHOWS) return false
+ if (state.firstRunAt === undefined || now - state.firstRunAt < MIN_AGE_MS) return false
+ if ((state.docOpens ?? 0) < MIN_DOC_OPENS) return false
+ if (shown > 0 && now - (state.lastShownAt ?? 0) < RESHOW_AFTER_MS) return false
+ return true
 }
 
 /**
@@ -85,12 +85,12 @@ export function shouldShowStarPrompt(state: StarPromptState, now: number): boole
  * are not upgrades: they go through the regular value-moment gates.
  */
 export function isUpgradeLaunch(
-  prevVersion: string | null,
-  currentVersion: string,
-  onboardingSeen: boolean,
+ prevVersion: string | null,
+ currentVersion: string,
+ onboardingSeen: boolean,
 ): boolean {
-  if (prevVersion !== null) return prevVersion !== currentVersion
-  return onboardingSeen
+ if (prevVersion !== null) return prevVersion !== currentVersion
+ return onboardingSeen
 }
 
 /**
@@ -99,15 +99,15 @@ export function isUpgradeLaunch(
  * never seen the prompt, and only once per session (caller clears its flag).
  */
 export function shouldShowUpgradeStarPrompt(state: StarPromptState): boolean {
-  return !state.resolved && (state.shownCount ?? 0) === 0
+ return !state.resolved && (state.shownCount ?? 0) === 0
 }
 
 /** the prompt was displayed (counted whether or not the user reacts) */
 export function withShown(state: StarPromptState, now: number): StarPromptState {
-  return { ...state, shownCount: (state.shownCount ?? 0) + 1, lastShownAt: now }
+ return { ...state, shownCount: (state.shownCount ?? 0) + 1, lastShownAt: now }
 }
 
 /** the user reacted (opened the repo page or said "already starred") */
 export function withResolved(state: StarPromptState): StarPromptState {
-  return { ...state, resolved: true }
+ return { ...state, resolved: true }
 }

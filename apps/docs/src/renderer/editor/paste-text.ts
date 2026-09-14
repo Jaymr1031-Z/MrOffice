@@ -11,15 +11,15 @@ import { Fragment, Slice } from '@tiptap/pm/model'
 import type { EditorView } from '@tiptap/pm/view'
 
 export function pasteTextSlice(text: string, $context: ResolvedPos, view: EditorView): Slice {
-  // same precedence as typing (storedMarks ?? marks at caret); an explicit
-  // empty array from a user toggle is respected, like typing would
-  const marks = view.state.storedMarks ?? $context.marks()
-  const schema = view.state.schema
-  const paragraph = schema.nodes.docParagraph
-  // the default parser's line handling: consecutive breaks collapse to one split
-  const blocks = text
-    .split(/(?:\r\n?|\n)+/)
-    .map((line) => paragraph.create(null, line ? schema.text(line, marks) : null))
-  // open ends so single-line text merges inline into the destination paragraph
-  return new Slice(Fragment.from(blocks), 1, 1)
+ // same precedence as typing (storedMarks ?? marks at caret); an explicit
+ // empty array from a user toggle is respected, like typing would
+ const marks = view.state.storedMarks ?? $context.marks()
+ const schema = view.state.schema
+ const paragraph = schema.nodes.docParagraph
+ // the default parser's line handling: consecutive breaks collapse to one split
+ const blocks = text
+ .split(/(?:\r\n?|\n)+/)
+ .map((line) => paragraph.create(null, line ? schema.text(line, marks) : null))
+ // open ends so single-line text merges inline into the destination paragraph
+ return new Slice(Fragment.from(blocks), 1, 1)
 }

@@ -12,27 +12,27 @@ const packagedPath = (fileName: string) => join(process.resourcesPath, 'wasm', f
 const req = () => createRequire(import.meta.url)
 
 export function pdfiumWasmPath(): string {
-  try {
-    return req().resolve('@embedpdf/pdfium/pdfium.wasm')
-  } catch {
-    return packagedPath('pdfium.wasm')
-  }
+ try {
+ return req().resolve('@embedpdf/pdfium/pdfium.wasm')
+ } catch {
+ return packagedPath('pdfium.wasm')
+ }
 }
 
 export function hbSubsetWasmPath(): string {
-  const r = req()
-  try {
-    // harfbuzzjs ≤0.10 ships hb-subset.wasm at the package root with no exports map
-    return r.resolve('harfbuzzjs/hb-subset.wasm')
-  } catch {
-    /* fall through */
-  }
-  try {
-    // harfbuzzjs ≥1.x seals subpaths; the wasm sits next to the exported entry point
-    const p = join(dirname(r.resolve('harfbuzzjs')), 'harfbuzz-subset.wasm')
-    if (existsSync(p)) return p
-  } catch {
-    /* fall through */
-  }
-  return packagedPath('hb-subset.wasm')
+ const r = req()
+ try {
+ // harfbuzzjs ≤0.10 ships hb-subset.wasm at the package root with no exports map
+ return r.resolve('harfbuzzjs/hb-subset.wasm')
+ } catch {
+ /* fall through */
+ }
+ try {
+ // harfbuzzjs ≥1.x seals subpaths; the wasm sits next to the exported entry point
+ const p = join(dirname(r.resolve('harfbuzzjs')), 'harfbuzz-subset.wasm')
+ if (existsSync(p)) return p
+ } catch {
+ /* fall through */
+ }
+ return packagedPath('hb-subset.wasm')
 }

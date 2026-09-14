@@ -3,10 +3,10 @@ import type { SlidesApi } from '../shared/ipc'
 import type { ProjectApi } from '@genoffice/project-store'
 
 declare global {
-  interface Window {
-    slidesApi: SlidesApi
-    projectApi: ProjectApi
-  }
+ interface Window {
+ slidesApi: SlidesApi
+ projectApi: ProjectApi
+ }
 }
 
 export {}

@@ -4,14 +4,14 @@
 import { partitionDropPayload } from '@genoffice/electron-utils'
 
 export interface DroppedFilesDeps {
-  /** the normal File > Open pipeline; false = the path didn't open */
-  openDocumentPath: (path: string) => boolean
-  /** bring the shell window forward (the drop may land in a detached editor) */
-  revealShellWindow: () => void
-  /** the shared warning box; receives a localized message */
-  showWarning: (message: string) => void
-  /** localized template for one-or-more unsupported extensions */
-  unsupportedMessage: (exts: string[]) => string
+ /** the normal File > Open pipeline; false = the path didn't open */
+ openDocumentPath: (path: string) => boolean
+ /** bring the shell window forward (the drop may land in a detached editor) */
+ revealShellWindow: () => void
+ /** the shared warning box; receives a localized message */
+ showWarning: (message: string) => void
+ /** localized template for one-or-more unsupported extensions */
+ unsupportedMessage: (exts: string[]) => string
 }
 
 /**
@@ -20,9 +20,9 @@ export interface DroppedFilesDeps {
  * formats instead of letting them disappear silently.
  */
 export function handleDroppedFiles(raw: unknown, deps: DroppedFilesDeps): void {
-  const { supported, unsupportedExts } = partitionDropPayload(raw)
-  let opened = false
-  for (const path of supported) opened = deps.openDocumentPath(path) || opened
-  if (opened) deps.revealShellWindow()
-  if (unsupportedExts.length > 0) deps.showWarning(deps.unsupportedMessage(unsupportedExts))
+ const { supported, unsupportedExts } = partitionDropPayload(raw)
+ let opened = false
+ for (const path of supported) opened = deps.openDocumentPath(path) || opened
+ if (opened) deps.revealShellWindow()
+ if (unsupportedExts.length > 0) deps.showWarning(deps.unsupportedMessage(unsupportedExts))
 }

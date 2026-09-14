@@ -20,14 +20,14 @@ import type { UniverRuntime } from './univer-state'
 const BUILTIN_SENTINEL = FUNCTION_NAMES_MATH.SUM
 
 export function installSupportedFunctionProbe(runtime: UniverRuntime): { dispose(): void } {
-  const functionService = runtime.univer.__getInjector().get(IFunctionService)
-  setSupportedFunctionProbe({
-    ready: () => functionService.hasExecutor(BUILTIN_SENTINEL),
-    supports: (name) => functionService.hasExecutor(name),
-  })
-  return {
-    dispose() {
-      setSupportedFunctionProbe(null)
-    },
-  }
+ const functionService = runtime.univer.__getInjector().get(IFunctionService)
+ setSupportedFunctionProbe({
+ ready: () => functionService.hasExecutor(BUILTIN_SENTINEL),
+ supports: (name) => functionService.hasExecutor(name),
+ })
+ return {
+ dispose() {
+ setSupportedFunctionProbe(null)
+ },
+ }
 }

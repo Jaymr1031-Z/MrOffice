@@ -131,8 +131,8 @@ describe('anti hand-building from scratch', () => {
     const access = {
       ...mkAccess([blankDeck]),
       retryBackoffMs: 0,
-      isCloudPageGenEnabled: async () => true,
-      generatePageCloud: async () => ({ ok: true, marker: 'cloudpptx:/tmp/x.pptx' }),
+
+      generatePageLocal: async () => ({ ok: true, marker: 'cloudpptx:/tmp/x.pptx' }),
     } as unknown as DeckAccess
     const skill = createSlidesSkill(access)
     // First run one generate_deck to set htmlGenerated=true

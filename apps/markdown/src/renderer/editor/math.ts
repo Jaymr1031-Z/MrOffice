@@ -13,42 +13,42 @@ import { openMathEditor } from './mathEdit'
 const STRICT_INLINE_MATH_RE = /^\$(?!\s)([^$\n]*[^\s$])\$(?!\d)/
 
 const StrictInlineMath = InlineMath.extend({
-  markdownTokenizer: {
-    name: 'inlineMath',
-    level: 'inline',
-    start: (src: string) => src.indexOf('$'),
-    tokenize: (src: string) => {
-      const match = STRICT_INLINE_MATH_RE.exec(src)
-      if (!match) return undefined
-      return { type: 'inlineMath', raw: match[0], latex: match[1].trim() }
-    },
-  },
+ markdownTokenizer: {
+ name: 'inlineMath',
+ level: 'inline',
+ start: (src: string) => src.indexOf('$'),
+ tokenize: (src: string) => {
+ const match = STRICT_INLINE_MATH_RE.exec(src)
+ if (!match) return undefined
+ return { type: 'inlineMath', raw: match[0], latex: match[1].trim() }
+ },
+ },
 })
 
 /** Math nodes are atoms — clicking one opens the LaTeX edit popover. */
 const MathClickEdit = Extension.create({
-  name: 'mathClickEdit',
+ name: 'mathClickEdit',
 
-  addProseMirrorPlugins() {
-    const editor = this.editor
-    return [
-      new Plugin({
-        props: {
-          handleClickOn: (view, _pos, node, nodePos, event) => {
-            if (node.type.name !== 'blockMath' && node.type.name !== 'inlineMath') return false
-            if (!view.editable) return false
-            const target = event.target as HTMLElement | null
-            const anchor = target?.closest?.('.tiptap-mathematics-render') ?? target
-            if (!anchor) return false
-            openMathEditor(editor, { pos: nodePos, anchor: anchor.getBoundingClientRect() })
-            return true
-          },
-        },
-      }),
-    ]
-  },
+ addProseMirrorPlugins() {
+ const editor = this.editor
+ return [
+ new Plugin({
+ props: {
+ handleClickOn: (view, _pos, node, nodePos, event) => {
+ if (node.type.name !== 'blockMath' && node.type.name !== 'inlineMath') return false
+ if (!view.editable) return false
+ const target = event.target as HTMLElement | null
+ const anchor = target?.closest?.('.tiptap-mathematics-render') ?? target
+ if (!anchor) return false
+ openMathEditor(editor, { pos: nodePos, anchor: anchor.getBoundingClientRect() })
+ return true
+ },
+ },
+ }),
+ ]
+ },
 })
 
 export function buildMathExtensions(): AnyExtension[] {
-  return [BlockMath, StrictInlineMath, MathClickEdit]
+ return [BlockMath, StrictInlineMath, MathClickEdit]
 }

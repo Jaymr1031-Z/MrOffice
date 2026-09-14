@@ -15,39 +15,39 @@ import type { ChainedCommands, Editor } from '@tiptap/core'
  * dispatches once, so a single undo reverts the whole break.
  */
 export function insertPageBreak(editor: Editor): boolean {
-  const { $from, empty } = editor.state.selection
-  const start = (): ChainedCommands => {
-    const chain = editor.chain().focus()
-    return empty ? chain : chain.deleteSelection()
-  }
-  const markCaretBlock = (chain: ChainedCommands): ChainedCommands =>
-    chain.command(({ state, tr, dispatch }) => {
-      const caret = state.selection.$from
-      if (!caret.parent.isTextblock) return false
-      if (!('pageBreakBefore' in caret.parent.attrs)) return false
-      if (dispatch) {
-        tr.setNodeMarkup(caret.before(caret.depth), undefined, {
-          ...caret.parent.attrs,
-          pageBreakBefore: true,
-        })
-        dispatch(tr.scrollIntoView())
-      }
-      return true
-    })
+ const { $from, empty } = editor.state.selection
+ const start = (): ChainedCommands => {
+ const chain = editor.chain().focus()
+ return empty ? chain : chain.deleteSelection()
+ }
+ const markCaretBlock = (chain: ChainedCommands): ChainedCommands =>
+ chain.command(({ state, tr, dispatch }) => {
+ const caret = state.selection.$from
+ if (!caret.parent.isTextblock) return false
+ if (!('pageBreakBefore' in caret.parent.attrs)) return false
+ if (dispatch) {
+ tr.setNodeMarkup(caret.before(caret.depth), undefined, {
+ ...caret.parent.attrs,
+ pageBreakBefore: true,
+ })
+ dispatch(tr.scrollIntoView())
+ }
+ return true
+ })
 
-  if ($from.parent.isTextblock && 'pageBreakBefore' in $from.parent.attrs) {
-    if ($from.parentOffset === 0) {
-      if ($from.before($from.depth) === 0) {
-        return start()
-          .insertContent({ type: 'hardBreak', attrs: { pageBreak: true } })
-          .run()
-      }
-      return markCaretBlock(start()).run()
-    }
-    return markCaretBlock(start().splitBlock()).run()
-  }
-  // non-textblock contexts keep the explicit break paragraph
-  return start()
-    .insertContent({ type: 'docParagraph', attrs: { pageBreakBefore: true } })
-    .run()
+ if ($from.parent.isTextblock && 'pageBreakBefore' in $from.parent.attrs) {
+ if ($from.parentOffset === 0) {
+ if ($from.before($from.depth) === 0) {
+ return start()
+ .insertContent({ type: 'hardBreak', attrs: { pageBreak: true } })
+ .run()
+ }
+ return markCaretBlock(start()).run()
+ }
+ return markCaretBlock(start().splitBlock()).run()
+ }
+ // non-textblock contexts keep the explicit break paragraph
+ return start()
+ .insertContent({ type: 'docParagraph', attrs: { pageBreakBefore: true } })
+ .run()
 }

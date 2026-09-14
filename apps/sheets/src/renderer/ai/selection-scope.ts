@@ -17,13 +17,13 @@ import { columnLabel, type RangeBounds } from '../../domain/cell-address'
 import type { FrozenSelection } from './tools'
 
 export interface ScopeChip {
-  /** A1 notation to label the chip with; null shows no chip at all */
-  readonly range: string | null
-  /** the scope belongs to a run in flight, so it can no longer be dropped */
-  readonly locked: boolean
-  /** header names when the scope covers whole columns; they label the chip in
-   *  place of the range, because that is what the user picked */
-  readonly columns?: readonly string[]
+ /** A1 notation to label the chip with; null shows no chip at all */
+ readonly range: string | null
+ /** the scope belongs to a run in flight, so it can no longer be dropped */
+ readonly locked: boolean
+ /** header names when the scope covers whole columns; they label the chip in
+ * place of the range, because that is what the user picked */
+ readonly columns?: readonly string[]
 }
 
 /**
@@ -33,26 +33,26 @@ export interface ScopeChip {
  * run.
  */
 export function resolveScopeChip(
-  runScope: FrozenSelection | null | undefined,
-  liveScope: FrozenSelection | null,
-  dismissed: boolean,
+ runScope: FrozenSelection | null | undefined,
+ liveScope: FrozenSelection | null,
+ dismissed: boolean,
 ): ScopeChip {
-  const scope = runScope !== undefined ? runScope : dismissed ? null : liveScope
-  return {
-    range: scope?.a1 ?? null,
-    locked: runScope !== undefined,
-    ...(scope?.columns ? { columns: scope.columns } : {}),
-  }
+ const scope = runScope !== undefined ? runScope : dismissed ? null : liveScope
+ return {
+ range: scope?.a1 ?? null,
+ locked: runScope !== undefined,
+ ...(scope?.columns ? { columns: scope.columns } : {}),
+ }
 }
 
 /** Last row/column index holding data; both -1 on a sheet with no data. */
 export interface DataExtent {
-  readonly lastRow: number
-  readonly lastColumn: number
+ readonly lastRow: number
+ readonly lastColumn: number
 }
 
 /** Longest header text kept before an ellipsis, so one verbose header cannot
- *  push the chip over the composer width. */
+ * push the chip over the composer width. */
 const MAX_HEADER_CHARS = 24
 /** Past this many columns a list of names stops reading as a label. */
 const MAX_NAMED_COLUMNS = 3
@@ -70,20 +70,20 @@ const MAX_NAMED_COLUMNS = 3
  * the size they marked out.
  */
 export function clampBoundsToExtent(bounds: RangeBounds, extent: DataExtent): RangeBounds {
-  const cap = (start: number, end: number, last: number): number =>
-    start <= last ? Math.min(end, last) : end
-  return {
-    startRow: bounds.startRow,
-    startColumn: bounds.startColumn,
-    endRow: cap(bounds.startRow, bounds.endRow, extent.lastRow),
-    endColumn: cap(bounds.startColumn, bounds.endColumn, extent.lastColumn),
-  }
+ const cap = (start: number, end: number, last: number): number =>
+ start <= last ? Math.min(end, last) : end
+ return {
+ startRow: bounds.startRow,
+ startColumn: bounds.startColumn,
+ endRow: cap(bounds.startRow, bounds.endRow, extent.lastRow),
+ endColumn: cap(bounds.startColumn, bounds.endColumn, extent.lastColumn),
+ }
 }
 
 export function boundsToA1(bounds: RangeBounds): string {
-  const start = `${columnLabel(bounds.startColumn)}${bounds.startRow + 1}`
-  if (bounds.startRow === bounds.endRow && bounds.startColumn === bounds.endColumn) return start
-  return `${start}:${columnLabel(bounds.endColumn)}${bounds.endRow + 1}`
+ const start = `${columnLabel(bounds.startColumn)}${bounds.startRow + 1}`
+ if (bounds.startRow === bounds.endRow && bounds.startColumn === bounds.endColumn) return start
+ return `${start}:${columnLabel(bounds.endColumn)}${bounds.endRow + 1}`
 }
 
 /**
@@ -97,21 +97,21 @@ export function boundsToA1(bounds: RangeBounds): string {
  * recognizable thing in that column.
  */
 export function columnScopeHeaders(
-  bounds: RangeBounds,
-  extent: DataExtent,
-  headerAt: (column: number) => string,
+ bounds: RangeBounds,
+ extent: DataExtent,
+ headerAt: (column: number) => string,
 ): readonly string[] | null {
-  if (extent.lastRow < 0) return null
-  if (bounds.startRow !== 0 || bounds.endRow < extent.lastRow) return null
-  if (bounds.endColumn - bounds.startColumn + 1 > MAX_NAMED_COLUMNS) return null
-  const headers: string[] = []
-  for (let column = bounds.startColumn; column <= bounds.endColumn; column += 1) {
-    const header = headerAt(column).trim()
-    // an unnamed column cannot be described any better than by its letter
-    if (!header) return null
-    headers.push(
-      header.length > MAX_HEADER_CHARS ? `${header.slice(0, MAX_HEADER_CHARS)}…` : header,
-    )
-  }
-  return headers
+ if (extent.lastRow < 0) return null
+ if (bounds.startRow !== 0 || bounds.endRow < extent.lastRow) return null
+ if (bounds.endColumn - bounds.startColumn + 1 > MAX_NAMED_COLUMNS) return null
+ const headers: string[] = []
+ for (let column = bounds.startColumn; column <= bounds.endColumn; column += 1) {
+ const header = headerAt(column).trim()
+ // an unnamed column cannot be described any better than by its letter
+ if (!header) return null
+ headers.push(
+ header.length > MAX_HEADER_CHARS ? `${header.slice(0, MAX_HEADER_CHARS)}…` : header,
+ )
+ }
+ return headers
 }

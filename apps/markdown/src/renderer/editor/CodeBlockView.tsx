@@ -5,84 +5,84 @@ import { Dropdown } from '@genoffice/ui'
 import { t } from '../i18n/locale'
 
 const LANGUAGES = [
-  'plaintext',
-  'bash',
-  'c',
-  'cpp',
-  'csharp',
-  'css',
-  'diff',
-  'dockerfile',
-  'go',
-  'graphql',
-  'html',
-  'java',
-  'javascript',
-  'json',
-  'kotlin',
-  'lua',
-  'markdown',
-  'objectivec',
-  'php',
-  'python',
-  'r',
-  'ruby',
-  'rust',
-  'scala',
-  'scss',
-  'sql',
-  'swift',
-  'typescript',
-  'xml',
-  'yaml',
+ 'plaintext',
+ 'bash',
+ 'c',
+ 'cpp',
+ 'csharp',
+ 'css',
+ 'diff',
+ 'dockerfile',
+ 'go',
+ 'graphql',
+ 'html',
+ 'java',
+ 'javascript',
+ 'json',
+ 'kotlin',
+ 'lua',
+ 'markdown',
+ 'objectivec',
+ 'php',
+ 'python',
+ 'r',
+ 'ruby',
+ 'rust',
+ 'scala',
+ 'scss',
+ 'sql',
+ 'swift',
+ 'typescript',
+ 'xml',
+ 'yaml',
 ]
 
 export function CodeBlockView({ node, updateAttributes, editor }: NodeViewProps) {
-  const [copied, setCopied] = useState(false)
-  const copyTimerRef = useRef<number | null>(null)
-  const mountedRef = useRef(true)
-  const language = String(node.attrs.language ?? '') || 'plaintext'
+ const [copied, setCopied] = useState(false)
+ const copyTimerRef = useRef<number | null>(null)
+ const mountedRef = useRef(true)
+ const language = String(node.attrs.language ?? '') || 'plaintext'
 
-  useEffect(() => {
-    mountedRef.current = true
-    return () => {
-      mountedRef.current = false
-      if (copyTimerRef.current !== null) window.clearTimeout(copyTimerRef.current)
-    }
-  }, [])
+ useEffect(() => {
+ mountedRef.current = true
+ return () => {
+ mountedRef.current = false
+ if (copyTimerRef.current !== null) window.clearTimeout(copyTimerRef.current)
+ }
+ }, [])
 
-  const copy = () => {
-    void navigator.clipboard
-      .writeText(node.textContent)
-      .then(() => {
-        if (!mountedRef.current) return
-        if (copyTimerRef.current !== null) window.clearTimeout(copyTimerRef.current)
-        setCopied(true)
-        copyTimerRef.current = window.setTimeout(() => {
-          copyTimerRef.current = null
-          setCopied(false)
-        }, 1500)
-      })
-      .catch(() => {})
-  }
+ const copy = () => {
+ void navigator.clipboard
+ .writeText(node.textContent)
+ .then(() => {
+ if (!mountedRef.current) return
+ if (copyTimerRef.current !== null) window.clearTimeout(copyTimerRef.current)
+ setCopied(true)
+ copyTimerRef.current = window.setTimeout(() => {
+ copyTimerRef.current = null
+ setCopied(false)
+ }, 1500)
+ })
+ .catch(() => {})
+ }
 
-  return (
-    <NodeViewWrapper className="md-codeblock">
-      <div className="md-codeblock-bar" contentEditable={false}>
-        <Dropdown
-          className="md-codeblock-lang"
-          value={LANGUAGES.includes(language) ? language : 'plaintext'}
-          disabled={!editor.isEditable}
-          options={LANGUAGES.map((lang) => ({ value: lang, label: lang }))}
-          onPick={(lang) => updateAttributes({ language: lang === 'plaintext' ? null : lang })}
-        />
-        <button type="button" className="md-codeblock-copy" onClick={copy}>
-          {copied ? t('codeCopied') : t('codeCopy')}
-        </button>
-      </div>
-      <pre>
-        <NodeViewContent<'code'> as="code" />
-      </pre>
-    </NodeViewWrapper>
-  )
+ return (
+ <NodeViewWrapper className="md-codeblock">
+ <div className="md-codeblock-bar" contentEditable={false}>
+ <Dropdown
+ className="md-codeblock-lang"
+ value={LANGUAGES.includes(language) ? language : 'plaintext'}
+ disabled={!editor.isEditable}
+ options={LANGUAGES.map((lang) => ({ value: lang, label: lang }))}
+ onPick={(lang) => updateAttributes({ language: lang === 'plaintext' ? null : lang })}
+ />
+ <button type="button" className="md-codeblock-copy" onClick={copy}>
+ {copied ? t('codeCopied') : t('codeCopy')}
+ </button>
+ </div>
+ <pre>
+ <NodeViewContent<'code'> as="code" />
+ </pre>
+ </NodeViewWrapper>
+ )
 }

@@ -44,11 +44,6 @@ const SKIP_DIR = /^(node_modules|out|dist|release|tests|__tests__|target)$/
 /** Runtime that is always present but never imported by specifier */
 const IMPLICIT = ['electron']
 
-/**
- * Packages copied into the installer verbatim by electron-builder rather than
- * bundled — the gsk CLI and its runtime deps are spawned, never imported, so
- * they are invisible to the import scan.
- */
 function extraResourceSeeds() {
   // the electron-builder config lives in its own cjs module (not package.json
   // "build") so the publish URL can be injected from the environment
@@ -69,8 +64,6 @@ const LICENSE_PATH = { electron: 'dist/LICENSE' }
 const NOTE = {
   '@fluentui/react-icons':
     'Copyright (c) Microsoft Corporation. Licensed under the MIT License.\nhttps://github.com/microsoft/fluentui-system-icons',
-  '@genspark/cli':
-    'Copyright (c) Genspark. Licensed under the MIT License.\nhttps://www.npmjs.com/package/@genspark/cli',
 }
 
 /** SPDX strings that need a word on which side of a dual license we take */
@@ -246,7 +239,7 @@ const seed = importedNames()
 const { resolved, missing } = closure(seed)
 resolved.sort(([a], [b]) => a.localeCompare(b))
 
-let out = `GenOffice — Third-Party Software Notices
+let out = `MrOffice — Third-Party Software Notices
 
 This application includes third-party software components under the licenses
 reproduced below.
@@ -322,17 +315,17 @@ const FONTS = [
     '© Adobe / Google. This bundle ships a subset of the original fonts (reduced glyph coverage for size);\nno other modifications were made.',
   ],
   [
-    'GenOffice Sans KR (Noto Sans CJK KR derivative)',
+    'MrOffice Sans KR (Noto Sans CJK KR derivative)',
     'SIL OFL 1.1',
     'Copyright 2014-2021 Adobe (http://www.adobe.com/), Google LLC, Reserved Font Name "Source".\nSubset with modified advance widths and horizontally transformed Noto CJK outlines to match measured\nKorean Office-family metrics; renamed per OFL 1.1. No Microsoft font outlines are included.',
   ],
   [
-    'GenOffice Serif KR (Noto Serif CJK KR derivative)',
+    'MrOffice Serif KR (Noto Serif CJK KR derivative)',
     'SIL OFL 1.1',
     'Copyright 2017-2024 Adobe (http://www.adobe.com/), Reserved Font Name "Source".\nSubset with modified advance widths and horizontally transformed Noto CJK outlines to match measured\nKorean Office-family metrics; renamed per OFL 1.1. No Microsoft font outlines are included.',
   ],
   [
-    'GenOffice Che Latin KR (Noto Sans CJK KR derivative)',
+    'MrOffice Che Latin KR (Noto Sans CJK KR derivative)',
     'SIL OFL 1.1',
     'Copyright 2014-2021 Adobe (http://www.adobe.com/), Google LLC, Reserved Font Name "Source".\nASCII subset with fixed 0.5em advances and horizontally transformed Noto CJK outlines; Microsoft\nDotumChe is used only as a metric reference. Renamed per OFL 1.1. No Microsoft outlines are included.',
   ],
@@ -342,17 +335,17 @@ const FONTS = [
     '© The Noto Project Authors. This bundle ships a subset of the original fonts;\nglyphs and metrics are unmodified.',
   ],
   [
-    'GenOffice Gothic KR (NanumGothic derivative)',
+    'MrOffice Gothic KR (NanumGothic derivative)',
     'SIL OFL 1.1',
     `${GOTHIC_KR_COPYRIGHT}\nSubset with unmodified metrics; renamed per OFL 1.1.`,
   ],
   [
-    'GenOffice Poppins (Poppins derivative)',
+    'MrOffice Poppins (Poppins derivative)',
     'SIL OFL 1.1',
     'Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins).\nLatin subset with unmodified metrics and advances; renamed.',
   ],
   [
-    'GenOffice Tamil (Noto Sans Tamil derivative)',
+    'MrOffice Tamil (Noto Sans Tamil derivative)',
     'SIL OFL 1.1',
     '© The Noto Project Authors, original Reserved Font Name "Noto". Modified advance widths;\nrenamed per OFL 1.1.',
   ],

@@ -1,7 +1,6 @@
 import type { AgentMessage, AgentToolCall, AgentToolDef } from '@genoffice/agent-core'
 
 export type AiProviderId =
-  | 'genspark'
   | 'codex'
   | 'anthropic'
   | 'gemini'
@@ -18,12 +17,6 @@ export type AiProviderId =
   | 'opencode-zen'
   | 'opencode-go'
   | 'custom'
-
-/** Genspark account status (gsk login state; the sole auth source for AI features) */
-export interface GenSparkAccountStatus {
-  loggedIn: boolean
-  email?: string
-}
 
 export interface AiProviderConfig {
   apiKey: string
@@ -54,19 +47,11 @@ export interface AiSettings {
   provider: AiProviderId
   providers: Record<AiProviderId, AiProviderConfig>
   /**
-   * Genspark cloud tools (web/image search via gsk, image generation, media
-   * analysis). Default true; false makes tools skip the gsk backend entirely
-   * (search falls back to free sources, gsk-only tools are unavailable).
-   * Only meaningful while signed in — signed out, the gsk backend is
-   * unavailable regardless.
-   */
-  gskToolsEnabled?: boolean
-  /**
    * Output-token cap for ONE model turn of agent runs (default
-   * DEFAULT_MAX_OUTPUT_TOKENS). Reasoning models bill their thinking against
-   * this same budget, so a heavy edit turn can consume all of it and close with
-   * finish_reason=length and no prose at all — raising it is the user's lever
-   * (absent = the default, so pre-existing settings files keep working).
+   * DEFAULT_MAX_OUTPUT_TOKENS). Reasoning models use this same budget for
+   * thinking and output, so a heavy edit turn can consume all of it and close
+   * with finish_reason=length and no prose at all — raising it is the user's
+   * lever (absent = the default, so pre-existing settings files keep working).
    */
   maxOutputTokens?: number | undefined
 }
@@ -110,8 +95,8 @@ export interface AiStreamChunk {
   /** complete parsed tool call (emitted once its arguments finish streaming) */
   toolCall?: AgentToolCall
   error?: string
-  /** machine-readable error cause ('timeout', exhausted 'credits', 'network' connectivity failure, 'overloaded' capacity/rate limit); lets the renderer localize the message */
-  errorCode?: 'timeout' | 'credits' | 'network' | 'overloaded'
+  /** machine-readable error cause ('timeout', 'network' connectivity failure, 'overloaded' capacity/rate limit); lets the renderer localize the message */
+  errorCode?: 'timeout' | 'network' | 'overloaded'
   /** normalized stop reason carried on 'done' ('max_tokens' = output cut off by the token limit) */
   stopReason?: string
 }

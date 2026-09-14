@@ -8,18 +8,15 @@ export type {
   AiSettings,
   AiStreamChunk,
   AiStreamRequest,
-  GenSparkAccountStatus,
   LegacyAiSettings,
 } from './types'
 export {
   AI_PROVIDERS,
   DEFAULT_MAX_OUTPUT_TOKENS,
-  GENSPARK_LLM_BASE_URLS,
   MAX_MAX_OUTPUT_TOKENS,
   MIN_MAX_OUTPUT_TOKENS,
   activeProvider,
   clampMaxOutputTokens,
-  cloudToolsEnabled,
   defaultAiSettings,
   maxOutputTokensOf,
   resolveAiSettings,
@@ -36,7 +33,7 @@ export { setAiUserAgent, setRescueFetch } from './fetch'
 export { isAiNetworkError } from './network-error'
 export { isAiOverloadedError } from './overload-error'
 export { parseOutputCapRejection } from './output-cap'
-export { AiCreditsError, sseLines, streamForProvider } from './stream'
+export { sseLines, streamForProvider } from './stream'
 export type { StreamCallbacks } from './stream'
 export {
   AI_CHAT_RESPONSE_TIMEOUT_MS,

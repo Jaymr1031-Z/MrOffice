@@ -12,21 +12,21 @@ const HEADER_UNHIDE_SETTLE_MS = 120
 let installed = false
 
 export function installHeaderUnhideDebounce(): void {
-  if (installed) return
-  installed = true
-  const proto = HeaderUnhideRenderController.prototype as any
-  const origUpdate = proto._update
-  const pending = new WeakMap<object, ReturnType<typeof setTimeout>>()
-  proto._update = function (workbook: unknown, worksheet: unknown) {
-    const timer = pending.get(this)
-    if (timer !== undefined) clearTimeout(timer)
-    pending.set(
-      this,
-      setTimeout(() => {
-        pending.delete(this)
-        if (this._disposed) return
-        origUpdate.call(this, workbook, worksheet)
-      }, HEADER_UNHIDE_SETTLE_MS),
-    )
-  }
+ if (installed) return
+ installed = true
+ const proto = HeaderUnhideRenderController.prototype as any
+ const origUpdate = proto._update
+ const pending = new WeakMap<object, ReturnType<typeof setTimeout>>()
+ proto._update = function (workbook: unknown, worksheet: unknown) {
+ const timer = pending.get(this)
+ if (timer !== undefined) clearTimeout(timer)
+ pending.set(
+ this,
+ setTimeout(() => {
+ pending.delete(this)
+ if (this._disposed) return
+ origUpdate.call(this, workbook, worksheet)
+ }, HEADER_UNHIDE_SETTLE_MS),
+ )
+ }
 }

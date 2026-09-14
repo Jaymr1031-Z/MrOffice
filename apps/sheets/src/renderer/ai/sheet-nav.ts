@@ -16,25 +16,25 @@ export const SHEET_NAV_SCHEME = 'sheetnav://'
  * parser will take them.
  */
 export function parseSheetNavHref(href: string): string | null {
-  if (!href.startsWith(SHEET_NAV_SCHEME)) return null
-  const raw = href.slice(SHEET_NAV_SCHEME.length).trim()
-  if (raw === '') return null
-  let ref: string
-  try {
-    ref = decodeURIComponent(raw)
-  } catch {
-    // a stray '%' is not worth dropping the citation over
-    ref = raw
-  }
-  return quoteSheetPrefix(ref.trim()) || null
+ if (!href.startsWith(SHEET_NAV_SCHEME)) return null
+ const raw = href.slice(SHEET_NAV_SCHEME.length).trim()
+ if (raw === '') return null
+ let ref: string
+ try {
+ ref = decodeURIComponent(raw)
+ } catch {
+ // a stray '%' is not worth dropping the citation over
+ ref = raw
+ }
+ return quoteSheetPrefix(ref.trim()) || null
 }
 
 /** `My Summary!B2` -> `'My Summary'!B2`; already-quoted and bare refs pass through. */
 function quoteSheetPrefix(ref: string): string {
-  const bang = ref.lastIndexOf('!')
-  if (bang <= 0) return ref
-  const sheet = ref.slice(0, bang)
-  const body = ref.slice(bang + 1)
-  if (sheet.startsWith("'") || !/[\s'()]/.test(sheet)) return ref
-  return `'${sheet.replace(/'/g, "''")}'!${body}`
+ const bang = ref.lastIndexOf('!')
+ if (bang <= 0) return ref
+ const sheet = ref.slice(0, bang)
+ const body = ref.slice(bang + 1)
+ if (sheet.startsWith("'") || !/[\s'()]/.test(sheet)) return ref
+ return `'${sheet.replace(/'/g, "''")}'!${body}`
 }

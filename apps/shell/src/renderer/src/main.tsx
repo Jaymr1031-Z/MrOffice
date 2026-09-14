@@ -19,25 +19,25 @@ if (navigator.platform.toLowerCase().includes('mac')) document.body.classList.ad
 // resolve the persisted language, first-run flag, and theme before first paint
 // so the UI never flashes (home showing briefly before the onboarding overlay)
 void Promise.all([
-  window.aiOffice.getLanguage(),
-  // if the flag is unreadable, skip onboarding rather than block the home screen
-  window.aiOffice.onboardingSeen().catch(() => true),
-  window.aiOffice.getTheme().catch(() => 'system' as const),
+ window.aiOffice.getLanguage(),
+ // if the flag is unreadable, skip onboarding rather than block the home screen
+ window.aiOffice.onboardingSeen().catch(() => true),
+ window.aiOffice.getTheme().catch(() => 'system' as const),
 ]).then(([lang, onboardingSeen, theme]) => {
-  document.documentElement.lang = htmlLang(lang)
-  // apply theme attribute before first paint to avoid flash
-  if (theme !== 'system') {
-    document.documentElement.setAttribute('data-theme', theme)
-  }
-  window.aiOffice.onThemeChanged((next) => {
-    if (next === 'system') document.documentElement.removeAttribute('data-theme')
-    else document.documentElement.setAttribute('data-theme', next)
-  })
-  createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-      <LocaleProvider initial={lang}>
-        <AppFrame initialOnboardingSeen={onboardingSeen} />
-      </LocaleProvider>
-    </React.StrictMode>,
-  )
+ document.documentElement.lang = htmlLang(lang)
+ // apply theme attribute before first paint to avoid flash
+ if (theme !== 'system') {
+ document.documentElement.setAttribute('data-theme', theme)
+ }
+ window.aiOffice.onThemeChanged((next) => {
+ if (next === 'system') document.documentElement.removeAttribute('data-theme')
+ else document.documentElement.setAttribute('data-theme', next)
+ })
+ createRoot(document.getElementById('root')!).render(
+ <React.StrictMode>
+ <LocaleProvider initial={lang}>
+ <AppFrame initialOnboardingSeen={onboardingSeen} />
+ </LocaleProvider>
+ </React.StrictMode>,
+ )
 })

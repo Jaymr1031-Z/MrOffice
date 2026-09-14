@@ -11,15 +11,15 @@
  * offers to restore.
  */
 export function closeGuardDecision(state: {
-  /** Pending edits the renderer last reported */
-  pendingEdits: number
-  /** The renderer is already gone */
-  destroyed: boolean
-  /** before-quit / SIGTERM / SIGINT seen */
-  shuttingDown: boolean
+ /** Pending edits the renderer last reported */
+ pendingEdits: number
+ /** The renderer is already gone */
+ destroyed: boolean
+ /** before-quit / SIGTERM / SIGINT seen */
+ shuttingDown: boolean
 }): 'proceed' | 'prompt' {
-  if (state.pendingEdits <= 0) return 'proceed'
-  if (state.destroyed) return 'proceed'
-  if (state.shuttingDown) return 'proceed'
-  return 'prompt'
+ if (state.pendingEdits <= 0) return 'proceed'
+ if (state.destroyed) return 'proceed'
+ if (state.shuttingDown) return 'proceed'
+ return 'prompt'
 }

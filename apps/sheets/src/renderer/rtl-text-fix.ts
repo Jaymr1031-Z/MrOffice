@@ -27,189 +27,189 @@ import { EditorBridgeService } from '@univerjs/sheets-ui'
 const STRONG_RTL_MARK = /[\u200F\u061C]/ // RLM, ALM
 const LTR_MARK = '\u200E' // LRM
 const RTL_SCRIPT_LETTER =
-  /[\p{Script=Arabic}\p{Script=Hebrew}\p{Script=Syriac}\p{Script=Thaana}\p{Script=Nko}\p{Script=Samaritan}\p{Script=Mandaic}\p{Script=Adlam}]/u
+ /[\p{Script=Arabic}\p{Script=Hebrew}\p{Script=Syriac}\p{Script=Thaana}\p{Script=Nko}\p{Script=Samaritan}\p{Script=Mandaic}\p{Script=Adlam}]/u
 const LETTER = /\p{L}/u
 
 /// First-strong-character scan. Digits, punctuation and spaces are weak or
 /// neutral and skipped; RTL-script digits (e.g. Arabic-Indic ٠-٩) are not
 /// letters, so they stay weak here too, matching the bidi classes.
 export function resolveBidiDirection(text: string): 'ltr' | 'rtl' {
-  for (const ch of text) {
-    if (STRONG_RTL_MARK.test(ch)) return 'rtl'
-    if (ch === LTR_MARK) return 'ltr'
-    if (LETTER.test(ch)) return RTL_SCRIPT_LETTER.test(ch) ? 'rtl' : 'ltr'
-  }
-  return 'ltr'
+ for (const ch of text) {
+ if (STRONG_RTL_MARK.test(ch)) return 'rtl'
+ if (ch === LTR_MARK) return 'ltr'
+ if (LETTER.test(ch)) return RTL_SCRIPT_LETTER.test(ch) ? 'rtl' : 'ltr'
+ }
+ return 'ltr'
 }
 
 interface CellDocSkeletonLike {
-  getViewModel(): {
-    getDataModel(): { getBody(): { dataStream?: string } | undefined }
-  }
+ getViewModel(): {
+ getDataModel(): { getBody(): { dataStream?: string } | undefined }
+ }
 }
 
 interface FontCacheConfigLike {
-  horizontalAlign?: HorizontalAlign
-  vertexAngle?: number
-  centerAngle?: number
-  cellData?: Nullable<ICellData>
-  documentSkeleton?: CellDocSkeletonLike
+ horizontalAlign?: HorizontalAlign
+ vertexAngle?: number
+ centerAngle?: number
+ cellData?: Nullable<ICellData>
+ documentSkeleton?: CellDocSkeletonLike
 }
 
 const isGeneralTextCell = (cell: Nullable<ICellData> | undefined): boolean => {
-  const type = cell?.t
-  if (type === CellValueType.NUMBER || type === CellValueType.BOOLEAN) return false
-  return !(type === undefined && typeof cell?.v === 'number')
+ const type = cell?.t
+ if (type === CellValueType.NUMBER || type === CellValueType.BOOLEAN) return false
+ return !(type === undefined && typeof cell?.v === 'number')
 }
 
 const cellText = (config: FontCacheConfigLike): string =>
-  config.documentSkeleton?.getViewModel().getDataModel().getBody()?.dataStream ??
-  String(config.cellData?.v ?? '')
+ config.documentSkeleton?.getViewModel().getDataModel().getBody()?.dataStream ??
+ String(config.cellData?.v ?? '')
 
 export interface EditorLayoutLike {
-  horizontalAlign: HorizontalAlign
-  textRotation?: { a?: number; v?: number } | null
-  documentModel?: { getBody(): { dataStream?: string } | undefined } | null
+ horizontalAlign: HorizontalAlign
+ textRotation?: { a?: number; v?: number } | null
+ documentModel?: { getBody(): { dataStream?: string } | undefined } | null
 }
 
 interface EditCellStateLike {
-  documentLayoutObject?: EditorLayoutLike | null
+ documentLayoutObject?: EditorLayoutLike | null
 }
 
 /** The editor-bridge counterpart of the General rule: an unrotated,
- *  unaligned cell whose text reads right-to-left edits right-aligned. */
+ * unaligned cell whose text reads right-to-left edits right-aligned. */
 export function rightAlignRtlGeneralEditor(layout: EditorLayoutLike | null | undefined): void {
-  if (
-    layout &&
-    layout.horizontalAlign === HorizontalAlign.UNSPECIFIED &&
-    !layout.textRotation?.a &&
-    !layout.textRotation?.v &&
-    resolveBidiDirection(layout.documentModel?.getBody()?.dataStream ?? '') === 'rtl'
-  ) {
-    layout.horizontalAlign = HorizontalAlign.RIGHT
-  }
+ if (
+ layout &&
+ layout.horizontalAlign === HorizontalAlign.UNSPECIFIED &&
+ !layout.textRotation?.a &&
+ !layout.textRotation?.v &&
+ resolveBidiDirection(layout.documentModel?.getBody()?.dataStream ?? '') === 'rtl'
+ ) {
+ layout.horizontalAlign = HorizontalAlign.RIGHT
+ }
 }
 
 interface DirectionalContext {
-  save(): void
-  restore(): void
-  direction: CanvasDirection
-  textAlign: CanvasTextAlign
+ save(): void
+ restore(): void
+ direction: CanvasDirection
+ textAlign: CanvasTextAlign
 }
 
 let installed = false
 
 export function installRtlTextDirectionFix(): void {
-  if (installed) return
-  installed = true
+ if (installed) return
+ installed = true
 
-  // General alignment, single choke point: the font-style cache entry feeds
-  // the fast paint path, the overflow-direction calc and the overflow clip,
-  // so resolving it here keeps all three consistent.
-  const skeletonProto = SpreadsheetSkeleton.prototype as unknown as {
-    _calculateOverflowCell(row: number, column: number, config: FontCacheConfigLike): boolean
-  }
-  const origOverflow = skeletonProto._calculateOverflowCell
-  skeletonProto._calculateOverflowCell = function (
-    row: number,
-    column: number,
-    config: FontCacheConfigLike,
-  ): boolean {
-    if (
-      config.horizontalAlign === HorizontalAlign.UNSPECIFIED &&
-      !config.vertexAngle &&
-      !config.centerAngle &&
-      isGeneralTextCell(config.cellData) &&
-      resolveBidiDirection(cellText(config)) === 'rtl'
-    ) {
-      config.horizontalAlign = HorizontalAlign.RIGHT
-    }
-    return origOverflow.call(this, row, column, config)
-  }
+ // General alignment, single choke point: the font-style cache entry feeds
+ // the fast paint path, the overflow-direction calc and the overflow clip,
+ // so resolving it here keeps all three consistent.
+ const skeletonProto = SpreadsheetSkeleton.prototype as unknown as {
+ _calculateOverflowCell(row: number, column: number, config: FontCacheConfigLike): boolean
+ }
+ const origOverflow = skeletonProto._calculateOverflowCell
+ skeletonProto._calculateOverflowCell = function (
+ row: number,
+ column: number,
+ config: FontCacheConfigLike,
+ ): boolean {
+ if (
+ config.horizontalAlign === HorizontalAlign.UNSPECIFIED &&
+ !config.vertexAngle &&
+ !config.centerAngle &&
+ isGeneralTextCell(config.cellData) &&
+ resolveBidiDirection(cellText(config)) === 'rtl'
+ ) {
+ config.horizontalAlign = HorizontalAlign.RIGHT
+ }
+ return origOverflow.call(this, row, column, config)
+ }
 
-  // Rich-text / wrapped cells render through the Documents component, whose
-  // page renderConfig carries its own unresolved General alignment.
-  const documentsProto = Documents.prototype as unknown as {
-    getSkeleton(): CellDocSkeletonLike | null | undefined
-    _horizontalHandler(
-      pageWidth: number,
-      pagePaddingLeft: number,
-      pagePaddingRight: number,
-      horizontalAlign: HorizontalAlign,
-      vertexAngleDeg?: number,
-      centerAngleDeg?: number,
-      cellValueType?: CellValueType,
-    ): number
-  }
-  const origHorizontal = documentsProto._horizontalHandler
-  documentsProto._horizontalHandler = function (
-    pageWidth: number,
-    pagePaddingLeft: number,
-    pagePaddingRight: number,
-    horizontalAlign: HorizontalAlign,
-    vertexAngleDeg = 0,
-    centerAngleDeg = 0,
-    cellValueType?: CellValueType,
-  ): number {
-    if (
-      horizontalAlign === HorizontalAlign.UNSPECIFIED &&
-      !vertexAngleDeg &&
-      !centerAngleDeg &&
-      cellValueType !== CellValueType.NUMBER &&
-      cellValueType !== CellValueType.BOOLEAN
-    ) {
-      const text = this.getSkeleton?.()?.getViewModel().getDataModel().getBody()?.dataStream ?? ''
-      if (resolveBidiDirection(text) === 'rtl') horizontalAlign = HorizontalAlign.RIGHT
-    }
-    return origHorizontal.call(
-      this,
-      pageWidth,
-      pagePaddingLeft,
-      pagePaddingRight,
-      horizontalAlign,
-      vertexAngleDeg,
-      centerAngleDeg,
-      cellValueType,
-    )
-  }
+ // Rich-text / wrapped cells render through the Documents component, whose
+ // page renderConfig carries its own unresolved General alignment.
+ const documentsProto = Documents.prototype as unknown as {
+ getSkeleton(): CellDocSkeletonLike | null | undefined
+ _horizontalHandler(
+ pageWidth: number,
+ pagePaddingLeft: number,
+ pagePaddingRight: number,
+ horizontalAlign: HorizontalAlign,
+ vertexAngleDeg?: number,
+ centerAngleDeg?: number,
+ cellValueType?: CellValueType,
+ ): number
+ }
+ const origHorizontal = documentsProto._horizontalHandler
+ documentsProto._horizontalHandler = function (
+ pageWidth: number,
+ pagePaddingLeft: number,
+ pagePaddingRight: number,
+ horizontalAlign: HorizontalAlign,
+ vertexAngleDeg = 0,
+ centerAngleDeg = 0,
+ cellValueType?: CellValueType,
+ ): number {
+ if (
+ horizontalAlign === HorizontalAlign.UNSPECIFIED &&
+ !vertexAngleDeg &&
+ !centerAngleDeg &&
+ cellValueType !== CellValueType.NUMBER &&
+ cellValueType !== CellValueType.BOOLEAN
+ ) {
+ const text = this.getSkeleton?.()?.getViewModel().getDataModel().getBody()?.dataStream ?? ''
+ if (resolveBidiDirection(text) === 'rtl') horizontalAlign = HorizontalAlign.RIGHT
+ }
+ return origHorizontal.call(
+ this,
+ pageWidth,
+ pagePaddingLeft,
+ pagePaddingRight,
+ horizontalAlign,
+ vertexAngleDeg,
+ centerAngleDeg,
+ cellValueType,
+ )
+ }
 
-  // The in-cell editor paints through the same Documents component, so the
-  // page handler above right-aligns its text too — but Univer seats the caret
-  // (and hit-tests clicks) from the document margin, which the editor bridge
-  // only widens for an explicit RIGHT alignment. Resolve General the same way
-  // in the bridge state so caret and text agree, and the editor grows away
-  // from its right edge like an explicitly right-aligned cell.
-  const bridgeProto = EditorBridgeService.prototype as unknown as {
-    getLatestEditCellState(): EditCellStateLike | null | undefined
-  }
-  const origLatestEditCellState = bridgeProto.getLatestEditCellState
-  bridgeProto.getLatestEditCellState = function () {
-    const state = origLatestEditCellState.call(this)
-    rightAlignRtlGeneralEditor(state?.documentLayoutObject)
-    return state
-  }
+ // The in-cell editor paints through the same Documents component, so the
+ // page handler above right-aligns its text too — but Univer seats the caret
+ // (and hit-tests clicks) from the document margin, which the editor bridge
+ // only widens for an explicit RIGHT alignment. Resolve General the same way
+ // in the bridge state so caret and text agree, and the editor grows away
+ // from its right edge like an explicitly right-aligned cell.
+ const bridgeProto = EditorBridgeService.prototype as unknown as {
+ getLatestEditCellState(): EditCellStateLike | null | undefined
+ }
+ const origLatestEditCellState = bridgeProto.getLatestEditCellState
+ bridgeProto.getLatestEditCellState = function () {
+ const state = origLatestEditCellState.call(this)
+ rightAlignRtlGeneralEditor(state?.documentLayoutObject)
+ return state
+ }
 
-  const textClass = Text as unknown as {
-    drawWith(ctx: DirectionalContext, props: { text?: unknown }, skeleton?: unknown): void
-  }
-  const previousDrawWith = textClass.drawWith
-  if (typeof previousDrawWith !== 'function') return
-  textClass.drawWith = function (
-    this: unknown,
-    ctx: DirectionalContext,
-    props: { text?: unknown },
-    skeleton?: unknown,
-  ): void {
-    if (typeof props?.text !== 'string' || resolveBidiDirection(props.text) !== 'rtl') {
-      return previousDrawWith.call(this, ctx, props, skeleton)
-    }
-    ctx.save()
-    ctx.direction = 'rtl'
-    ctx.textAlign = 'left'
-    try {
-      return previousDrawWith.call(this, ctx, props, skeleton)
-    } finally {
-      ctx.restore()
-    }
-  }
+ const textClass = Text as unknown as {
+ drawWith(ctx: DirectionalContext, props: { text?: unknown }, skeleton?: unknown): void
+ }
+ const previousDrawWith = textClass.drawWith
+ if (typeof previousDrawWith !== 'function') return
+ textClass.drawWith = function (
+ this: unknown,
+ ctx: DirectionalContext,
+ props: { text?: unknown },
+ skeleton?: unknown,
+ ): void {
+ if (typeof props?.text !== 'string' || resolveBidiDirection(props.text) !== 'rtl') {
+ return previousDrawWith.call(this, ctx, props, skeleton)
+ }
+ ctx.save()
+ ctx.direction = 'rtl'
+ ctx.textAlign = 'left'
+ try {
+ return previousDrawWith.call(this, ctx, props, skeleton)
+ } finally {
+ ctx.restore()
+ }
+ }
 }

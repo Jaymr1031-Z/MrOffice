@@ -3,6 +3,6 @@
  * per-word probe Ranges make later ProseMirror re-renders crawl. Do not nest.
  */
 export function rangeSlot(): () => Range {
-  let range: Range | undefined
-  return () => (range ??= document.createRange())
+ let range: Range | undefined
+ return () => (range ??= document.createRange())
 }

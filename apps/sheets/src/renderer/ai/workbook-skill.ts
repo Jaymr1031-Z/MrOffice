@@ -2,10 +2,10 @@ import type { AgentSkill } from '@genoffice/agent-core'
 import basePrompt from './prompts/base.md?raw'
 import { verifySheetsResponse } from './response-verify'
 import {
-  WORKBOOK_TOOLS,
-  buildWorkbookContext,
-  executeWorkbookTool,
-  type SheetsSkillDeps,
+ WORKBOOK_TOOLS,
+ buildWorkbookContext,
+ executeWorkbookTool,
+ type SheetsSkillDeps,
 } from './tools'
 
 /**
@@ -19,12 +19,12 @@ import {
  * via load_guide.
  */
 export function createWorkbookSkill(deps: SheetsSkillDeps): AgentSkill {
-  return {
-    id: 'sheets',
-    systemPrompt: basePrompt,
-    tools: WORKBOOK_TOOLS,
-    buildContext: () => buildWorkbookContext(deps),
-    executeTool: (call) => executeWorkbookTool(call, deps),
-    verifyResponse: verifySheetsResponse,
-  }
+ return {
+ id: 'sheets',
+ systemPrompt: basePrompt,
+ tools: WORKBOOK_TOOLS,
+ buildContext: () => buildWorkbookContext(deps),
+ executeTool: (call) => executeWorkbookTool(call, deps),
+ verifyResponse: verifySheetsResponse,
+ }
 }
