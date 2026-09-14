@@ -1,4 +1,5 @@
 import { useI18n } from './locale'
+import { useRepoUrl } from './useRepoUrl'
 import './star-prompt.css'
 
 /**
@@ -30,6 +31,7 @@ function StarIcon() {
 
 export function StarPromptCard({ docOpens, onClose }: StarPromptCardProps) {
  const { t } = useI18n()
+ const repoUrl = useRepoUrl()
 
  const react = (action: 'starred' | 'later') => {
  void window.aiOffice.starPromptAction(action).catch(() => {})
@@ -65,6 +67,7 @@ export function StarPromptCard({ docOpens, onClose }: StarPromptCardProps) {
  </div>
  <p className="star-prompt-body">{t('starPromptBody')}</p>
  <div className="star-prompt-actions">
+ {repoUrl && (
  <button
  className="star-prompt-go"
  onClick={() => {
@@ -75,6 +78,7 @@ export function StarPromptCard({ docOpens, onClose }: StarPromptCardProps) {
  <StarIcon />
  {t('starPromptGo')}
  </button>
+ )}
  <button className="star-prompt-done" onClick={() => react('starred')}>
  {t('starPromptDone')}
  </button>

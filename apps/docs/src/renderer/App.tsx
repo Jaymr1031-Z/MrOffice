@@ -478,6 +478,30 @@ const DEFAULT_SETTINGS: AiSettings = {
  ) as AiSettings['providers'],
 }
 
+/**
+ * Trust-boundary guard for the split-pane preview.
+ *
+ * `splitHtml` is produced exclusively by `editor.getHTML()` — ProseMirror's own
+ * serialization of the document open in *this* app, so it is first-party,
+ * same-origin content, never remote/AI-supplied HTML. React already refuses to
+ * execute `<script>` tags inserted via dangerouslySetInnerHTML, but inline
+ * event-handler attributes (e.g. `<img onerror=...>`) DO run when parsed this
+ * way. As defense-in-depth we strip `<script>` and every `on*` attribute before
+ * injection. ProseMirror's output carries no such attributes, so this is a
+ * no-op for normal documents while closing the injection vector for any
+ * malformed or loaded document.
+ */
+function sanitizePreviewHtml(html: string): string {
+ const doc = new DOMParser().parseFromString(html, 'text/html')
+ doc.querySelectorAll('script').forEach((el) => el.remove())
+ doc.querySelectorAll('*').forEach((el) => {
+  for (const attr of Array.from(el.attributes)) {
+   if (/^on/i.test(attr.name)) el.removeAttribute(attr.name)
+  }
+ })
+ return doc.body.innerHTML
+}
+
 export function App() {
  // subscribe to language switches for re-render; strings all go through module-level t, so memoized callbacks never capture stale closures
  const { lang } = useI18n()
@@ -4796,7 +4820,7 @@ export function App() {
  <div className="page-wrap">
  <div
  className="doc-page ProseMirror split-doc"
- dangerouslySetInnerHTML={{ __html: splitHtml }}
+ dangerouslySetInnerHTML={{ __html: sanitizePreviewHtml(splitHtml) }}
  />
  </div>
  </div>

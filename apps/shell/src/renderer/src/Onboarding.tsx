@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import appIcon from './assets/app-icon.png'
 import { useI18n } from './locale'
 import type { StringKey } from './locale'
+import { useRepoUrl } from './useRepoUrl'
 import './onboarding.css'
 
 interface OnboardingProps {
@@ -161,6 +162,8 @@ export function Onboarding({ onDone }: OnboardingProps) {
  return () => window.removeEventListener('keydown', onKeyDown)
  })
 
+ const repoUrl = useRepoUrl()
+
  return (
  <div className="onb-overlay" role="dialog" aria-modal="true" aria-label={t(slide.titleKey)}>
  <div className="onb-card" ref={cardRef} tabIndex={-1}>
@@ -178,7 +181,7 @@ export function Onboarding({ onDone }: OnboardingProps) {
  <h2 className="onb-title">{t(s.titleKey)}</h2>
  <p className="onb-subtitle">{t(s.subtitleKey)}</p>
  {s.bodyKey && <p className="onb-body">{t(s.bodyKey)}</p>}
- {s.showStar && (
+ {s.showStar && repoUrl && (
  <div className="onb-star">
  <p className="onb-star-hint">{t('onbStarHint')}</p>
  <button
