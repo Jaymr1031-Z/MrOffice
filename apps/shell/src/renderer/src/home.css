@@ -15,7 +15,7 @@
   /* lift for the active segment in gray-track tab pills */
   --shadow-pill: 0 1px 2px rgb(0 0 0 / 8%);
 
-  /* mroffic-badge.svg is pure black-and-white; dark themes flip it to 1 */
+  /* mrlogo.png is a white-background mark; it reads on any theme as-is */
   --logo-invert: 0;
 }
 
@@ -119,8 +119,9 @@ body.vib .home {
 .logo-badge {
   display: block;
   height: 28px;
-  width: auto;
-  filter: invert(var(--logo-invert));
+  width: 28px;
+  border-radius: 7px;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 8%);
 }
 
 .logo-wordmark {
