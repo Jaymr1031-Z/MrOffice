@@ -49,9 +49,9 @@ import {
  showSaveDialogWithMemory,
  viewMenuTemplate,
  windowMenuTemplate,
-} from '@genoffice/electron-utils'
-import { createI18n, getUiLang, type Lang, normalizeLang, setUiLang } from '@genoffice/i18n'
-import { ProjectStore } from '@genoffice/project-store'
+} from '@mroffice/electron-utils'
+import { createI18n, getUiLang, type Lang, normalizeLang, setUiLang } from '@mroffice/i18n'
+import { ProjectStore } from '@mroffice/project-store'
 
 import {
  AiTimeoutError,
@@ -69,11 +69,11 @@ import {
  type AiSettings,
  type AiStreamChunk,
  type LegacyAiSettings,
-} from '@genoffice/ai-provider'
-import { shutdownCodexAppServers } from '@genoffice/ai-provider/codex-app-server'
+} from '@mroffice/ai-provider'
+import { shutdownCodexAppServers } from '@mroffice/ai-provider/codex-app-server'
 import { csvToXlsxBuffer, decodeCsvBuffer, sheetCsvToXlsxBuffer } from '../gateway/csv-import'
-import { webSearch, imageSearch } from '@genoffice/ai-search'
-import { parseFileToText } from '@genoffice/file-parse'
+import { webSearch, imageSearch } from '@mroffice/ai-search'
+import { parseFileToText } from '@mroffice/file-parse'
 import type { CellEdit, SheetStructuralOps } from '../gateway/xlsx-gateway'
 import { readArchiveEntryText, saveWorkbookViaSidecar } from '../gateway/xlsx-package-io'
 import { parsePivotDefinition } from '../gateway/xlsx-pivot'
@@ -1886,7 +1886,7 @@ const ATTACHMENT_TEXT_EXTS = new Set([
  'sql',
  'css',
 ])
-/** office/pdf formats extract text via @genoffice/file-parse; images skip text
+/** office/pdf formats extract text via @mroffice/file-parse; images skip text
  * extraction and go multimodal (sheets:files-read-image) */
 const ATTACHMENT_EXTS = new Set([
  ...ATTACHMENT_TEXT_EXTS,
@@ -1967,7 +1967,7 @@ function savePastedImage(data: unknown, ext: unknown): string | null {
  return filePath
 }
 
-/** Attachment text extraction via @genoffice/file-parse (docx/pdf/pptx/xlsx/plain text) */
+/** Attachment text extraction via @mroffice/file-parse (docx/pdf/pptx/xlsx/plain text) */
 async function extractAttachmentText(filePath: string): Promise<string> {
  const stat = statSync(filePath)
  const stamp = `${stat.mtimeMs}:${stat.size}`

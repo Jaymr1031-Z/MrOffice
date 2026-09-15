@@ -1,8 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import type { IpcRendererEvent } from 'electron'
-import { AI_PROVIDERS, getProviderAdapter } from '@genoffice/ai-provider/browser'
-import type { AiSettings, CodexModelCatalog } from '@genoffice/ai-provider/browser'
-import { installDropOpenBridge } from '@genoffice/electron-utils/drop-open'
+import { AI_PROVIDERS, getProviderAdapter } from '@mroffice/ai-provider/browser'
+import type { AiSettings, CodexModelCatalog } from '@mroffice/ai-provider/browser'
+import { installDropOpenBridge } from '@mroffice/electron-utils/drop-open'
 import type {
  HomeApi,
  RecentEntry,

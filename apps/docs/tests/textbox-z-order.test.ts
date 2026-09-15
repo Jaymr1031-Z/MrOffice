@@ -4,7 +4,7 @@
  * front), so a full-page background shape stays under later-ranked text boxes.
  */
 import { describe, expect, it } from 'vitest'
-import type { TextboxDisplay } from '@genoffice/docx-engine'
+import type { TextboxDisplay } from '@mroffice/docx-engine'
 import { textboxBoxStyle } from '../src/renderer/editor/protected-render'
 
 const box = (extra: Partial<TextboxDisplay>): TextboxDisplay => ({

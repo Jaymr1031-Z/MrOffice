@@ -3,7 +3,7 @@
  * dev servers.
  *
  * The root `dev` script used to inline the renderer URLs as a POSIX env-var
- * prefix (`DOCS_RENDERER_URL=... npm run dev -w @genoffice/shell`). cmd.exe
+ * prefix (`DOCS_RENDERER_URL=... npm run dev -w @mroffice/shell`). cmd.exe
  * has no such syntax, so on Windows the shell process never started and no
  * window appeared. Setting the variables here keeps `npm run dev` working on
  * Windows, macOS, and Linux alike (no cross-env dependency needed).
@@ -24,7 +24,7 @@ for (const [key, value] of Object.entries(RENDERER_URLS)) {
   if (!env[key]) env[key] = value
 }
 
-const child = spawn('npm', ['run', 'dev', '-w', '@genoffice/shell'], {
+const child = spawn('npm', ['run', 'dev', '-w', '@mroffice/shell'], {
   stdio: 'inherit',
   shell: true,
   env,

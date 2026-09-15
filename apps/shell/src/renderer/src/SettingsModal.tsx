@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
-import { Dropdown } from '@genoffice/ui'
+import { Dropdown } from '@mroffice/ui'
 import {
  DEFAULT_MAX_OUTPUT_TOKENS,
  MAX_MAX_OUTPUT_TOKENS,
  MIN_MAX_OUTPUT_TOKENS,
  clampMaxOutputTokens,
-} from '@genoffice/ai-provider/browser'
-import type { AiSettings } from '@genoffice/ai-provider'
+} from '@mroffice/ai-provider/browser'
+import type { AiSettings } from '@mroffice/ai-provider'
 import { useI18n } from './locale'
 import type { StringKey, TFunc } from './locale'
 import type { AiCatalogEntry, UiTheme } from '../../shared/home-api'

@@ -7,17 +7,17 @@
  * renderer sends edit intents (text/geometry changes) back to the main process, which applies
  * them to the model and rebuilds the RenderSlide.
  */
-import type { RenderSlide } from '@genoffice/pptx-render'
-import type { SlideComment, SectionInfo } from '@genoffice/pptx-engine'
+import type { RenderSlide } from '@mroffice/pptx-render'
+import type { SlideComment, SectionInfo } from '@mroffice/pptx-engine'
 import type {
  AiSettings,
  AiStreamChunk,
  AiStreamRequest,
-} from '@genoffice/ai-provider'
+} from '@mroffice/ai-provider'
 
-export type { SlideComment, SectionInfo } from '@genoffice/pptx-engine'
+export type { SlideComment, SectionInfo } from '@mroffice/pptx-engine'
 
-// Canonical definitions of AI-related types live in @genoffice/ai-provider / @genoffice/agent-core (shared with docs)
+// Canonical definitions of AI-related types live in @mroffice/ai-provider / @mroffice/agent-core (shared with docs)
 export type {
  AiProviderConfig,
  AiProviderId,
@@ -25,9 +25,9 @@ export type {
  AiSettings,
  AiStreamChunk,
  AiStreamRequest,
-} from '@genoffice/ai-provider'
-export { AI_PROVIDERS } from '@genoffice/ai-provider/browser'
-export type { AgentToolCall, AgentToolDef } from '@genoffice/agent-core'
+} from '@mroffice/ai-provider'
+export { AI_PROVIDERS } from '@mroffice/ai-provider/browser'
+export type { AgentToolCall, AgentToolDef } from '@mroffice/agent-core'
 
 export type UiTheme = 'light' | 'dark' | 'system'
 

@@ -38,7 +38,7 @@ import {
  showOpenDialogWithMemory,
  showSaveDialogWithMemory,
  toggleDevToolsItem,
-} from '@genoffice/electron-utils'
+} from '@mroffice/electron-utils'
 import {
  resolveGroupChildId,
  runTxn,
@@ -48,11 +48,11 @@ import {
  type TxnResult,
 } from './ops'
 import { mapScriptOps } from './ops/script-map'
-import { matchesElementRef } from '@genoffice/pptx-engine/identity'
+import { matchesElementRef } from '@mroffice/pptx-engine/identity'
 import { buildPagePptx, parsePageSpec } from './page-spec'
 import { sniffImageMime } from './media-mime'
-import { getUiLang, normalizeLang, setUiLang } from '@genoffice/i18n'
-import { ProjectStore } from '@genoffice/project-store'
+import { getUiLang, normalizeLang, setUiLang } from '@mroffice/i18n'
+import { ProjectStore } from '@mroffice/project-store'
 import {
  copyElementData,
  findGroupChild,
@@ -101,14 +101,14 @@ import {
  type Paragraph,
  type Slide,
  type TextElement,
-} from '@genoffice/pptx-engine'
+} from '@mroffice/pptx-engine'
 import {
  buildRenderSlide,
  layoutText,
  makeViewport,
  EMU_PER_PX_96,
  type RenderSlide,
-} from '@genoffice/pptx-render'
+} from '@mroffice/pptx-render'
 import { refineComplexWidths, shapedMetricsReady } from './shaped-metrics'
 import { cfbKind, isCfbHeader } from './cfb-sniff'
 import { unplayableAudioCodec } from './mp4-audio-sniff'

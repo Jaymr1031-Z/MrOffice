@@ -4,7 +4,7 @@ import {
  type StyleDisplay,
  type ThemeColors,
  type ThemeFonts,
-} from '@genoffice/docx-engine'
+} from '@mroffice/docx-engine'
 import {
  cjkDeclaredLineFactor,
  cssAutoLineMult,

@@ -19,7 +19,7 @@ import {
  type NewElementOptions,
  type NewTableOptions,
  type Paragraph,
-} from '@genoffice/pptx-engine'
+} from '@mroffice/pptx-engine'
 import {
  coerceBytes,
  dataUrlExt,

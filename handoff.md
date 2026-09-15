@@ -39,8 +39,8 @@ npm run typecheck
 
 - Lockfile update completed; npm audit reported 5 existing dependency vulnerabilities (2 moderate, 3 high). No automated remediation was applied.
 - Full `npm run typecheck` exited 0 after the changes.
-- `npm test` was run but stopped in `@genoffice/electron-utils`: 7/123 tests failed before reaching later workspaces. Failures are Windows-specific test assumptions around POSIX path separators, read-only-directory behavior under an Administrator account, and mocked `fetchRemoteImage` calls. No direct cause from the Genspark cleanup has been established; inspect before changing those tests.
-- Targeted cleanup coverage passed: `@genoffice/ai-search` (9 tests), `@genoffice/agent-core` (77 tests), `@genoffice/ai-provider` (163 tests), and `@genoffice/slides` (702 passed, 12 skipped). Slides emits non-fatal jsdom canvas warnings.
+- `npm test` was run but stopped in `@mroffice/electron-utils`: 7/123 tests failed before reaching later workspaces. Failures are Windows-specific test assumptions around POSIX path separators, read-only-directory behavior under an Administrator account, and mocked `fetchRemoteImage` calls. No direct cause from the Genspark cleanup has been established; inspect before changing those tests.
+- Targeted cleanup coverage passed: `@mroffice/ai-search` (9 tests), `@mroffice/agent-core` (77 tests), `@mroffice/ai-provider` (163 tests), and `@mroffice/slides` (702 passed, 12 skipped). Slides emits non-fatal jsdom canvas warnings.
 - Desktop runtime smoke tests, Electron packaging, and visual UI checks have not yet been run.
 
 ## Current State And Blockers

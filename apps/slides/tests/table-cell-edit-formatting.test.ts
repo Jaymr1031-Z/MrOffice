@@ -14,7 +14,7 @@ import {
   savePptx,
   type OpenedPptx,
   type TableElement,
-} from '@genoffice/pptx-engine'
+} from '@mroffice/pptx-engine'
 import { runTxn } from '../src/main/ops'
 
 let opened: OpenedPptx

@@ -12,7 +12,7 @@ import type {
  ProjectSummaryEntry,
  RecentEntry,
 } from '../../shared/home-api'
-import { useDismissablePopover } from '@genoffice/ui'
+import { useDismissablePopover } from '@mroffice/ui'
 import { fileCountKey, visiblePageCount } from './counts'
 import { useI18n } from './locale'
 import type { I18n, StringKey } from './locale'

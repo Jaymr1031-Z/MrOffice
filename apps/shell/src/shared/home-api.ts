@@ -3,10 +3,10 @@ import type {
  AiProviderMeta,
  AiSettings,
  CodexModelCatalog,
-} from '@genoffice/ai-provider'
+} from '@mroffice/ai-provider'
 import type { UpdateChannel } from './update-api'
 
-/** UI language; kept self-contained here (mirrors Lang in @genoffice/i18n) */
+/** UI language; kept self-contained here (mirrors Lang in @mroffice/i18n) */
 export type UiLanguage =
  | 'zh'
  | 'en'

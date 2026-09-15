@@ -41,7 +41,7 @@ import {
  type TextboxDisplay,
  type TextboxParaPatch,
  type TextboxParasPatchSet,
-} from '@genoffice/docx-engine'
+} from '@mroffice/docx-engine'
 import { t } from '../i18n/locale'
 import {
  canvasMetrics,

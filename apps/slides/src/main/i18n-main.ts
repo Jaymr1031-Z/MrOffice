@@ -1,5 +1,5 @@
 /** Main-process i18n strings for MrOffice Slides (dialogs, native menus, export, autosave prompts). */
-import { createI18n, getUiLang } from '@genoffice/i18n'
+import { createI18n, getUiLang } from '@mroffice/i18n'
 
 export const tMain = createI18n({
  zh: {

@@ -131,8 +131,8 @@ import {
  COMPLETED_VIA_TOOLS_TEXT,
  composeSkills,
  type AgentImage,
-} from '@genoffice/agent-core'
-import type { AiSettings } from '@genoffice/ai-provider'
+} from '@mroffice/agent-core'
+import type { AiSettings } from '@mroffice/ai-provider'
 import {
  copyTargetBounds,
  filteredCopySourceRows,

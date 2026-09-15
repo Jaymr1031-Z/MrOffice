@@ -22,8 +22,8 @@ import {
  printHtmlToPdf,
  safeExternalUrl,
  showOpenDialogWithMemory,
-} from '@genoffice/electron-utils'
-import { createI18n, getUiLang } from '@genoffice/i18n'
+} from '@mroffice/electron-utils'
+import { createI18n, getUiLang } from '@mroffice/i18n'
 import { PDF_CHANNELS } from '../shared/ipc'
 import type {
  ExportImagesRequest,
@@ -1424,7 +1424,7 @@ export function createPdfView(openPath?: string | null): WebContentsView {
  return view
 }
 
-/** Standalone window mode: `npm run dev -w @genoffice/pdf`, pdf path passed via argv */
+/** Standalone window mode: `npm run dev -w @mroffice/pdf`, pdf path passed via argv */
 export function startPdfStandalone(): void {
  installNavigationGuard(app)
  installContextMenu(app, () => contextMenuLabels(getUiLang()))

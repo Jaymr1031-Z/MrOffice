@@ -8,7 +8,7 @@ import {
  RibbonExpandButton,
  useDismissablePopover,
  useRibbonCollapse,
-} from '@genoffice/ui'
+} from '@mroffice/ui'
 import { useI18n } from '../i18n/locale'
 import type { StringKey } from '../i18n/locale'
 import { AiMark } from '../ai/AiPanel'

@@ -5,7 +5,7 @@
  * per-sheet print settings; nothing renders in the grid (Univer has no
  * page-layout view), everything lands in the saved file.
  */
-import { isMetafileMime, metafileToDataUrl } from '@genoffice/docx-engine/metafile'
+import { isMetafileMime, metafileToDataUrl } from '@mroffice/docx-engine/metafile'
 
 import { columnLabel } from '../domain/cell-address'
 import {

@@ -1,4 +1,4 @@
-import { defineStrings } from '@genoffice/i18n'
+import { defineStrings } from '@mroffice/i18n'
 
 /** Strings for editor/, pagination, and line-metrics */
 export const editorStrings = defineStrings({

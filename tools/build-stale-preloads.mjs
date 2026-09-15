@@ -44,7 +44,7 @@ if (stale.length) {
     // to npm.cmd, and spawning npm.cmd directly is blocked (EINVAL) by the
     // .bat/.cmd command-injection hardening. Without it this exits ENOENT and
     // `npm run dev` aborts before any dev server starts.
-    const r = spawnSync('npm', ['run', 'build', '-w', `@genoffice/${app}`], {
+    const r = spawnSync('npm', ['run', 'build', '-w', `@mroffice/${app}`], {
       stdio: 'inherit',
       shell: true,
     })

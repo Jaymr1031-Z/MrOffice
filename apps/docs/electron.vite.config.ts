@@ -6,25 +6,25 @@ import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 // node_modules is a symlink into the main checkout, so bare specifiers would
 // silently bundle the other checkout's (possibly stale) code.
 const localAlias = {
- '@genoffice/docx-engine': resolve(__dirname, '../../packages/docx-engine/src/index.ts'),
+ '@mroffice/docx-engine': resolve(__dirname, '../../packages/docx-engine/src/index.ts'),
 }
 
 export default defineConfig({
  // Main and preload use only electron + node builtins; bundle everything so
  // the packaged app doesn't rely on node_modules at runtime.
- // @genoffice/* deps ship as raw TS source with extensionless imports, so they
+ // @mroffice/* deps ship as raw TS source with extensionless imports, so they
  // must be bundled — externalizing them yields ERR_MODULE_NOT_FOUND under Node
  // (same setup as apps/slides).
  main: {
  plugins: [
- externalizeDepsPlugin({ exclude: ['@genoffice/electron-utils', '@genoffice/font-metrics'] }),
+ externalizeDepsPlugin({ exclude: ['@mroffice/electron-utils', '@mroffice/font-metrics'] }),
  ],
  resolve: { alias: localAlias },
  },
  preload: {
  // Sandboxed preload scripts cannot require arbitrary npm packages at
  // runtime, so the drop-open bridge must be bundled, not externalized.
- plugins: [externalizeDepsPlugin({ exclude: ['@genoffice/electron-utils'] })],
+ plugins: [externalizeDepsPlugin({ exclude: ['@mroffice/electron-utils'] })],
  },
  renderer: {
  plugins: [react()],

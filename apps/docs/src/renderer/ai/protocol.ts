@@ -6,7 +6,7 @@ import {
  type CommentInfo,
  type TableCell,
  type TableModel,
-} from '@genoffice/docx-engine'
+} from '@mroffice/docx-engine'
 import { pmTableToModel, tableModelToPmNode, type PmMark, type PmNode } from '../editor/convert'
 import { equationBlockJson, inlineEquationNodeJson } from '../editor/equation'
 import { inheritFrom, inheritTableFormatting, sameBlockRole } from './inherit-formatting'

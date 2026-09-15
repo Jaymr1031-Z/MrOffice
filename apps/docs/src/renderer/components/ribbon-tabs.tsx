@@ -5,7 +5,7 @@ import {
  useDismissablePopover,
  wordArtSolidColor,
  type WordArtPreset,
-} from '@genoffice/ui'
+} from '@mroffice/ui'
 import {
  buildLineParagraphXml,
  buildShapeParagraphXml,
@@ -14,7 +14,7 @@ import {
  LINE_KINDS,
  type HeaderFooter,
  type TextboxDisplay,
-} from '@genoffice/docx-engine'
+} from '@mroffice/docx-engine'
 import type { DocsTabInfo } from '../../shared/ipc'
 import { tableModelToPmNode } from '../editor/convert'
 import { insertPageBreak } from '../editor/page-break'

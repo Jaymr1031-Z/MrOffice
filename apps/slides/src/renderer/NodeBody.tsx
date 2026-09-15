@@ -19,7 +19,7 @@ import type {
  GroupRenderNode,
  ArrowEndRender,
  RenderReflection,
-} from '@genoffice/pptx-render'
+} from '@mroffice/pptx-render'
 import {
  featheredImage,
  featheredShapeCanvas,

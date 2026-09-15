@@ -31,19 +31,19 @@ import {
  type AiStreamChunk,
  type AiStreamRequest,
  type LegacyAiSettings,
-} from '@genoffice/ai-provider'
-import { shutdownCodexAppServers } from '@genoffice/ai-provider/codex-app-server'
-import { fetchRemoteImage } from '@genoffice/electron-utils'
-import { webSearch, imageSearch } from '@genoffice/ai-search'
-import { addPicture, editPictureSrcRect, replacePictureBytes } from '@genoffice/pptx-engine'
-import { matchesElementRef } from '@genoffice/pptx-engine/identity'
+} from '@mroffice/ai-provider'
+import { shutdownCodexAppServers } from '@mroffice/ai-provider/codex-app-server'
+import { fetchRemoteImage } from '@mroffice/electron-utils'
+import { webSearch, imageSearch } from '@mroffice/ai-search'
+import { addPicture, editPictureSrcRect, replacePictureBytes } from '@mroffice/pptx-engine'
+import { matchesElementRef } from '@mroffice/pptx-engine/identity'
 import { coverCropFractions } from '../shared/cover-crop'
 import type { AiRunFailure } from '../shared/ipc'
-import { EMU_PER_PX_96 } from '@genoffice/pptx-render'
+import { EMU_PER_PX_96 } from '@mroffice/pptx-render'
 import { tm } from './i18n-main'
 import { pushHistory, rebuildSlide, scheduleHistoryNotify, sessions } from './session-state'
 
-// ---- AI settings + streaming proxy (the main process does the networking to avoid renderer CORS; implementation shared via @genoffice/ai-provider) ----
+// ---- AI settings + streaming proxy (the main process does the networking to avoid renderer CORS; implementation shared via @mroffice/ai-provider) ----
 
 const AI_SETTINGS_PATH = () => join(app.getPath('userData'), 'ai-settings.json')
 

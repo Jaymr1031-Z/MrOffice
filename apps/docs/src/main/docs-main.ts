@@ -36,10 +36,10 @@ import {
  showSaveDialogWithMemory,
  toggleDevToolsItem,
  windowMenuTemplate,
-} from '@genoffice/electron-utils'
-import { configureMetricsCache, familyVerticalMetrics } from '@genoffice/font-metrics'
-import { createI18n, getUiLang, normalizeLang, setUiLang } from '@genoffice/i18n'
-import { ProjectStore } from '@genoffice/project-store'
+} from '@mroffice/electron-utils'
+import { configureMetricsCache, familyVerticalMetrics } from '@mroffice/font-metrics'
+import { createI18n, getUiLang, normalizeLang, setUiLang } from '@mroffice/i18n'
+import { ProjectStore } from '@mroffice/project-store'
 import type {
  IpcMainInvokeEvent,
  MenuItemConstructorOptions,
@@ -47,7 +47,7 @@ import type {
  SaveDialogOptions,
  WebContents,
 } from 'electron'
-import { parseFileToText } from '@genoffice/file-parse'
+import { parseFileToText } from '@mroffice/file-parse'
 import {
  AiTimeoutError,
  isAiNetworkError,
@@ -65,9 +65,9 @@ import {
  type AiStreamChunk,
  type AiStreamRequest,
  type LegacyAiSettings,
-} from '@genoffice/ai-provider'
-import { listCodexModels, shutdownCodexAppServers } from '@genoffice/ai-provider/codex-app-server'
-import { webSearch, imageSearch } from '@genoffice/ai-search'
+} from '@mroffice/ai-provider'
+import { listCodexModels, shutdownCodexAppServers } from '@mroffice/ai-provider/codex-app-server'
+import { webSearch, imageSearch } from '@mroffice/ai-search'
 import type {
  AiDocContent,
  AttachmentAddResult,
@@ -2437,7 +2437,7 @@ const TEXT_EXTS = new Set([
  'sql',
  'css',
 ])
-/** office/pdf formats get text extracted via @genoffice/file-parse; images skip extraction and go multimodal (files:read-image) */
+/** office/pdf formats get text extracted via @mroffice/file-parse; images skip extraction and go multimodal (files:read-image) */
 const ATTACHMENT_EXTS = new Set([
  ...TEXT_EXTS,
  'doc',
@@ -2537,7 +2537,7 @@ function savePastedImage(data: unknown, ext: unknown): string | null {
  return filePath
 }
 
-/** parse an attachment to text via @genoffice/file-parse (docx/pdf/pptx/xlsx/plain text) */
+/** parse an attachment to text via @mroffice/file-parse (docx/pdf/pptx/xlsx/plain text) */
 async function extractAttachmentText(filePath: string): Promise<string> {
  const stat = statSync(filePath)
  const stamp = `${stat.mtimeMs}:${stat.size}`
@@ -2563,7 +2563,7 @@ const TWIPS_PER_INCH = 1440
 
 // ---- AI settings + chat proxy (main process avoids renderer CORS) ----
 // provider metadata, settings defaults/migration, and per-provider streaming/chat
-// implementations live in @genoffice/ai-provider, shared with apps/sheets.
+// implementations live in @mroffice/ai-provider, shared with apps/sheets.
 
 const SETTINGS_PATH = () => userDataPath('ai-settings.json')
 

@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { metafileToDataUrl } from '@genoffice/docx-engine/metafile'
+import { metafileToDataUrl } from '@mroffice/docx-engine/metafile'
 import { createImageLoader } from '../src/renderer/image-loader'
 
-vi.mock('@genoffice/docx-engine/metafile', () => ({
+vi.mock('@mroffice/docx-engine/metafile', () => ({
   metafileToDataUrl: vi.fn(async () => 'data:image/png;base64,AA=='),
 }))
 

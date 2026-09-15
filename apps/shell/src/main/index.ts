@@ -34,7 +34,7 @@ import menuMdIcon1x from './assets/menu-md.png?asset'
 import menuMdIcon2x from './assets/menu-md@2x.png?asset'
 import menuHomeIcon1x from './assets/menu-home.png?asset'
 import menuHomeIcon2x from './assets/menu-home@2x.png?asset'
-import { createI18n, isLang, normalizeLang, setUiLang, type Lang } from '@genoffice/i18n'
+import { createI18n, isLang, normalizeLang, setUiLang, type Lang } from '@mroffice/i18n'
 import {
  DEFAULT_SAVE_DIR_KEY,
  DROP_OPEN_CHANNEL,
@@ -48,7 +48,7 @@ import {
  showOpenDialogWithMemory,
  showSaveDialogWithMemory,
  windowMenuTemplate,
-} from '@genoffice/electron-utils'
+} from '@mroffice/electron-utils'
 import { readAppSettings, writeAppSetting, writeAppSettings } from './app-settings'
 import {
  ANALYTICS_ENABLED_KEY,
@@ -72,7 +72,7 @@ import {
  withShown,
 } from './star-prompt'
 import { handleDroppedFiles } from './dropped-files'
-import { ProjectStore } from '@genoffice/project-store'
+import { ProjectStore } from '@mroffice/project-store'
 
 import {
  buildDocsMenu,

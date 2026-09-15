@@ -1,5 +1,5 @@
 {
-  "name": "@genoffice/docs",
+  "name": "@mroffice/docs",
   "productName": "MrOffice Docs",
   "version": "0.1.0",
   "license": "Apache-2.0",
@@ -18,14 +18,14 @@
     "dist:dir": "electron-vite build && electron-builder --dir"
   },
   "devDependencies": {
-    "@genoffice/agent-core": "*",
-    "@genoffice/i18n": "*",
-    "@genoffice/ai-provider": "*",
-    "@genoffice/ai-search": "*",
-    "@genoffice/docx-engine": "*",
-    "@genoffice/file-parse": "*",
-    "@genoffice/project-store": "*",
-    "@genoffice/ui": "*",
+    "@mroffice/agent-core": "*",
+    "@mroffice/i18n": "*",
+    "@mroffice/ai-provider": "*",
+    "@mroffice/ai-search": "*",
+    "@mroffice/docx-engine": "*",
+    "@mroffice/file-parse": "*",
+    "@mroffice/project-store": "*",
+    "@mroffice/ui": "*",
     "@tiptap/core": "3.31.0",
     "@tiptap/extensions": "3.31.0",
     "@tiptap/pm": "3.31.0",
@@ -91,10 +91,10 @@
     }
   },
   "dependencies": {
-    "@genoffice/electron-utils": "*",
-    "@genoffice/font-metrics": "*",
+    "@mroffice/electron-utils": "*",
+    "@mroffice/font-metrics": "*",
     "electron-updater": "^6.8.9",
     "pdf-lib": "^1.17.1",
-    "@genoffice/pptx-render": "*"
+    "@mroffice/pptx-render": "*"
   }
 }
