@@ -2,9 +2,9 @@
 
 **The world's first full-featured open-source AI Office suite.**
 
-[![License: Apache-2.0](https://img.shields.io/github/license/Jaymr/genoffice)](LICENSE)
-[![Latest release](https://img.shields.io/github/v/release/Jaymr/genoffice)](https://git.jaymr.top/Jaymr/genoffice/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/Jaymr/genoffice/total)](https://git.jaymr.top/Jaymr/genoffice/releases)
+ [![License: Apache-2.0](https://img.shields.io/github/license/Jaymr1031-Z/MrOffice)](LICENSE)
+ [![Latest release](https://img.shields.io/github/v/release/Jaymr1031-Z/MrOffice)](https://git.jaymr.top/Jaymr/genoffice/releases/latest)
+ [![Downloads](https://img.shields.io/github/downloads/Jaymr1031-Z/MrOffice/total)](https://git.jaymr.top/Jaymr/genoffice/releases)
 
 [Website](https://git.jaymr.top/Jaymr/genoffice/) · [Download](https://git.jaymr.top/Jaymr/genoffice/releases/latest) · [Privacy](PRIVACY.md) · [Demo](https://www.youtube.com/watch?v=B2pLdMX95v4)
 
