@@ -22,6 +22,7 @@ import {
  webContents,
 } from 'electron'
 import type { MenuItemConstructorOptions, NativeImage, WebContents } from 'electron'
+import appIconPath from './assets/app-icon.png?asset'
 import menuDocxIcon1x from './assets/menu-docx.png?asset'
 import menuDocxIcon2x from './assets/menu-docx@2x.png?asset'
 import menuXlsxIcon1x from './assets/menu-xlsx.png?asset'
@@ -2084,11 +2085,13 @@ function applyMenuFor(kind: TabKind): void {
 
 function createShellWindow(): void {
  const win = new BrowserWindow({
- width: 1360,
- height: 900,
- minWidth: 720,
- minHeight: 550,
- title: 'MrOffice',
+   width: 1360,
+   height: 900,
+   minWidth: 720,
+   minHeight: 550,
+   title: 'MrOffice',
+   // window + taskbar icon; macOS ignores this (dock icon comes from the bundle)
+   icon: appIconPath,
  // vibrancy: editor modules punch translucent regions (e.g. the slides
  // thumbnail pane) through to the desktop
  ...(process.platform === 'darwin'
